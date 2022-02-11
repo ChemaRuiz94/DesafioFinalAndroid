@@ -9,11 +9,11 @@
 
     <EditText
         android:id="@+id/ed_txt_userName_signUp"
+        style="@style/textBox_basic_style"
         android:layout_width="366dp"
         android:layout_height="55dp"
         android:ems="10"
         android:hint="@string/userName"
-        style="@style/textBox_basic_style"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,6 +81,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.593" />
+
+
 
     <Button
         android:id="@+id/btn_confirmar_signUp"
