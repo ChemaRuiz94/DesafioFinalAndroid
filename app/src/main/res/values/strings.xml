@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">EventosCompartidos</string>
+    <string name="app_name">Eventos Compartidos</string>
+    <string name="signUp">Sign Up</string>
+    <string name="logIn">Login</string>
+    <string name="userName">UserName</string>
+    <string name="password">Password</string>
+    <string name="repetPassword">Repet Password</string>
+    <string name="email">Email</string>
+    <string name="phone">Phone</string>
+    <string name="emptyCamps">Complete all fields</string>
+    <string name="samePassword">The Passwords not coincide</string>
+    <string name="phoneNotCorrect">The Phone format is not correct</string>
+    <string name="ERROR">ERROR</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="ocurridoErrorAutenticacion">Se ha producido un error autenticando al usuairo</string>
+    <string name="SignUpSuscesfull">SignUp Suscesfull</string>
 </resources>
