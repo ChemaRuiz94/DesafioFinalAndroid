@@ -1,15 +1,13 @@
-package com.chema.eventoscompartidos
+package com.chema.eventoscompartidos.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.util.Patterns
-import android.view.MotionEvent
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.MotionEventCompat
+import com.chema.eventoscompartidos.R
 import com.chema.eventoscompartidos.utils.Constantes
 import com.chema.eventoscompartidos.utils.ProviderType
 import com.chema.eventoscompartidos.utils.VariablesCompartidas
@@ -172,4 +170,6 @@ class SignUpActivity : AppCompatActivity() {
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }
+
+
 }

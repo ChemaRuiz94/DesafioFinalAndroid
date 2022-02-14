@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">Eventos Compartidos</string>
+    <string name="request_id_token">787108151618-uvmkm7nqao90csgngrtc2l1vfnhqikto.apps.googleusercontent.com</string>
+
     <string name="signUp">Sign Up</string>
     <string name="logIn">Login</string>
+    <string name="logInGoogle">Login con Google</string>
     <string name="userName">UserName</string>
     <string name="password">Password</string>
     <string name="repetPassword">Repet Password</string>
