@@ -86,10 +86,6 @@ class LoginActivity : AppCompatActivity() {
                     VariablesCompartidas.emailUsuarioActual = (it.result?.user?.email?:"")
 
                     check_user_rol()
-                    //irHome(it.result?.user?.email?:"")  //Esto de los interrogantes es por si está vacío el email.
-                    //Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
-
-
 
                 } else {
                     showAlert()
@@ -142,7 +138,13 @@ class LoginActivity : AppCompatActivity() {
         }
 
         if(VariablesCompartidas.rolUsuarioActual.equals("user")){
-            Toast.makeText(this, "USUARIO MINDUNDI", Toast.LENGTH_SHORT).show()
+
+            //Toast.makeText(this, "USUARIO MINDUNDI", Toast.LENGTH_SHORT).show()
+            var myIntent = Intent(this,HomeActivity::class.java)
+            startActivity(myIntent)
+
+        }else if(VariablesCompartidas.rolUsuarioActual.equals("activated_user")){
+            Toast.makeText(this, "USUARIO ACTIVADO", Toast.LENGTH_SHORT).show()
         }else{
             Toast.makeText(this, "USUARIO ADMIN", Toast.LENGTH_SHORT).show()
         }
@@ -193,7 +195,7 @@ class LoginActivity : AppCompatActivity() {
                         if (it.isSuccessful){
                             VariablesCompartidas.emailUsuarioActual = account.email?:""
                             //irHome(account.email?:"")  //Esto de los interrogantes es por si está vacío el email.
-                            Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
                         } else {
                             showAlert()
                         }

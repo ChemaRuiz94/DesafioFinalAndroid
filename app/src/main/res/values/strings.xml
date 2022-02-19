@@ -17,4 +17,5 @@
     <string name="aceptar">Aceptar</string>
     <string name="ocurridoErrorAutenticacion">Se ha producido un error autenticando al usuairo</string>
     <string name="SignUpSuscesfull">SignUp Suscesfull</string>
+    <string name="UserNotActivated">Your profile will be activated soon</string>
 </resources>
