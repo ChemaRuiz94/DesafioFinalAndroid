@@ -15,6 +15,28 @@
     <string name="phoneNotCorrect">The Phone format is not correct</string>
     <string name="ERROR">ERROR</string>
     <string name="aceptar">Aceptar</string>
+    <string name="cancelar">Cancelar</string>
     <string name="ocurridoErrorAutenticacion">Se ha producido un error autenticando al usuairo</string>
     <string name="SignUpSuscesfull">SignUp Suscesfull</string>
+    <string name="Suscesfull">Suscesfull</string>
+    <string name="UserNotActivated">Your profile will be activated soon</string>
+    <string name="title_activity_activated_user_home">ActivatedUserHomeActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="changePassword">Change Password</string>
+
+    <string name="chosePhoto">Chose phote</string>
+    <string name="strMensajeElegirFoto">How do you want to add the photo?</string>
+    <string name="strCamara">Camera</string>
+    <string name="strGaleria">Gallery</string>
+
+
+    <string name="menu_home">Home</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
 </resources>

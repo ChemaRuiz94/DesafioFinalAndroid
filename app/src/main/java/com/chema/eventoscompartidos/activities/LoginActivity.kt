@@ -1,6 +1,7 @@
 package com.chema.eventoscompartidos.activities
 
 import android.content.Intent
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -86,10 +87,6 @@ class LoginActivity : AppCompatActivity() {
                     VariablesCompartidas.emailUsuarioActual = (it.result?.user?.email?:"")
 
                     check_user_rol()
-                    //irHome(it.result?.user?.email?:"")  //Esto de los interrogantes es por si está vacío el email.
-                    //Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
-
-
 
                 } else {
                     showAlert()
@@ -103,7 +100,7 @@ class LoginActivity : AppCompatActivity() {
 
     suspend fun getDataFromFireStore2()  : QuerySnapshot? {
         return try{
-            val data = db.collection("${Constantes.collectionUser}")
+            val data = db.collection("${Constantes.collectionUser2}")
                 .get()
                 .await()
             data
@@ -126,7 +123,8 @@ class LoginActivity : AppCompatActivity() {
                     dc.document.get("userName").toString(),
                     dc.document.get("email").toString(),
                     dc.document.get("phone").toString().toInt(),
-                    dc.document.get("rol").toString()
+                    dc.document.get("rol").toString(),
+                    dc.document.get("img").toString()
                 )
                 Log.e("CHE","${al.rol}")
                 usuarios.add(al)
@@ -138,13 +136,26 @@ class LoginActivity : AppCompatActivity() {
         for (u in usuarios){
             if(u.email.equals(VariablesCompartidas.emailUsuarioActual)){
                 VariablesCompartidas.rolUsuarioActual = u.rol
+                VariablesCompartidas.userActual = u
             }
         }
 
         if(VariablesCompartidas.rolUsuarioActual.equals("user")){
-            Toast.makeText(this, "USUARIO MINDUNDI", Toast.LENGTH_SHORT).show()
-        }else{
+
+            //Toast.makeText(this, "USUARIO MINDUNDI", Toast.LENGTH_SHORT).show()
+            var myIntent = Intent(this,HomeActivity::class.java)
+            startActivity(myIntent)
+
+        }else if(VariablesCompartidas.rolUsuarioActual.equals("activated_user")){
+
+            //Toast.makeText(this, "USUARIO ACTIVADO", Toast.LENGTH_SHORT).show()
+            var myIntent = Intent(this,ActivatedUserHomeActivity::class.java)
+            startActivity(myIntent)
+
+        }else if (VariablesCompartidas.rolUsuarioActual.equals("admin")){
             Toast.makeText(this, "USUARIO ADMIN", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(this, "NINGUN TIPO DE ROL", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -193,7 +204,7 @@ class LoginActivity : AppCompatActivity() {
                         if (it.isSuccessful){
                             VariablesCompartidas.emailUsuarioActual = account.email?:""
                             //irHome(account.email?:"")  //Esto de los interrogantes es por si está vacío el email.
-                            Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
                         } else {
                             showAlert()
                         }
@@ -217,35 +228,5 @@ class LoginActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    /*
-    private fun check_rol(){
-        try{
-            if(VariablesCompartidas.rolUsuarioActual.equals("user")){
-                Toast.makeText(this, "USUARIO MINDUNDI", Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(this, "USUARIO ADMIN", Toast.LENGTH_SHORT).show()
-            }
-            /*
-            db.collection("${Constantes.collectionUser}").document("${VariablesCompartidas.emailUsuarioActual}").get().addOnSuccessListener {
 
-                var user = it as User
-                var rol = (it.get("rol") as String?)
-
-                if(rol.equals("user")){
-                    Toast.makeText(this, "USUARIO MINDUNDI", Toast.LENGTH_SHORT).show()
-                }else{
-                    Toast.makeText(this, "USUARIO ADMIN", Toast.LENGTH_SHORT).show()
-                }
-            }.addOnFailureListener{
-                Toast.makeText(this, "Algo ha ido mal al recuperar", Toast.LENGTH_SHORT).show()
-
-            }
-
-             */
-        }catch(e: Exception){
-            Log.e("CHE","ERROR  ${e.toString()}")
-        }
-    }
-
-     */
 }

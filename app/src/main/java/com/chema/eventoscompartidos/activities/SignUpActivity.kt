@@ -1,5 +1,7 @@
 package com.chema.eventoscompartidos.activities
 
+import android.content.Intent
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
@@ -130,7 +132,8 @@ class SignUpActivity : AppCompatActivity() {
                 reg_user() //guardamos el usuario
                 VariablesCompartidas.emailUsuarioActual = (it.result?.user?.email?:"")
                 Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
-                //irHome(it.result?.user?.email?:"") //vamos a home
+                var myIntent = Intent(this,HomeActivity::class.java)
+                startActivity(myIntent)
             } else {
                 showAlert()
             }
@@ -142,6 +145,7 @@ class SignUpActivity : AppCompatActivity() {
      */
     private fun reg_user(){
         val rol = "user"
+        var img : String? = null
         val email = ed_txt_email_signUp.text.toString()
 
 
@@ -151,10 +155,11 @@ class SignUpActivity : AppCompatActivity() {
             "userName" to ed_txt_userName_signUp.text.toString().trim(),
             "email" to email,
             "phone" to ed_txt_phone_signUp.text.toString().trim(),
-            "rol" to rol
+            "rol" to rol,
+            "img" to img
         )
 
-        db.collection("${Constantes.collectionUser}")
+        db.collection("${Constantes.collectionUser2}")
             .document(email) //Será la clave del documento.
             .set(user).addOnSuccessListener {
                 Toast.makeText(this, getString(R.string.SignUpSuscesfull), Toast.LENGTH_SHORT).show()
