@@ -49,7 +49,6 @@ class ProfileFragment: Fragment() {
 
     lateinit var userAct : User
     private var photo: Bitmap? = null
-    private var editMode: Boolean = false
 
     private lateinit var homeViewModel: ProfileViewModel
     private var _binding: FragmentProfileBinding? = null
@@ -129,16 +128,6 @@ class ProfileFragment: Fragment() {
             append(userAct.phone.toString())
         }
 
-        /*
-        if(!userAct.img.toString().equals("") && userAct.img != null){
-            //imgUsuarioPerfil.setBackgroundResource(userAct.img.toString().toInt())
-            val byteArray = userAct.img as ByteArray
-            val bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.count())
-            imgUsuarioPerfil.setImageBitmap(bmp)
-        }
-
-         */
-
         if(userAct.img != null){
             var bm : Bitmap? = StringToBitMap(userAct.img)
             imgUsuarioPerfil.setImageBitmap(bm)
@@ -161,19 +150,8 @@ class ProfileFragment: Fragment() {
             var rol = userAct.rol
             var email_mod = ed_txt_email_profile.text.toString().trim()
             var userName_mod = ed_txt_userName_profile.text.toString().trim()
-            var phone_mod = ed_txt_phone_profile.text.toString().trim()
+            var phone_mod = ed_txt_phone_profile.text.toString().trim().toInt()
 
-            /*
-            val bitmap = (imgUsuarioPerfil.getDrawable() as BitmapDrawable).bitmap
-            val baos = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-            val imageInByte: ByteArray = baos.toByteArray()
-
-
-             */
-            //val imageInByte = imgUsuarioPerfil.imageTintMode.toString().toByteArray()
-
-            //val imageInByte = Auxiliar.getBytes(imgUsuarioPerfil)
 
             val img : Bitmap = imgUsuarioPerfil.drawToBitmap()
             val imgST = ImageToString(img)
@@ -188,19 +166,27 @@ class ProfileFragment: Fragment() {
                 "img" to imgST
             )
 
+            var us = User(prov,userName_mod,email_mod,phone_mod,rol,imgST)
+
 
             db.collection("${Constantes.collectionUser2}")
                 .document(VariablesCompartidas.emailUsuarioActual.toString()) //Será la clave del documento.
                 .set(user).addOnSuccessListener {
 
+                    //val us : User = user as User
+                    userAct = us
+                    VariablesCompartidas.userActual = us 
 
-                        val navigationView: NavigationView =
-                            (context as AppCompatActivity).findViewById(R.id.nav_view)
-                        val header: View = navigationView.getHeaderView(0)
-                        val imgHe = header.findViewById<ImageView>(R.id.img_user_header)
-                        imgHe.setImageBitmap(photo)
+                    val navigationView: NavigationView =
+                        (context as AppCompatActivity).findViewById(R.id.nav_view)
+                    val header: View = navigationView.getHeaderView(0)
+                    val imgHe = header.findViewById<ImageView>(R.id.img_user_header)
+                    val nameHead = header.findViewById<TextView>(R.id.txt_userName_header)
+                    val emailHead = header.findViewById<TextView>(R.id.txt_userEmail_header)
 
-
+                    imgHe.setImageBitmap(photo)
+                    nameHead.setText(userAct.userName)
+                    emailHead.setText(userAct.email)
 
                     //Toast.makeText(this, "Almacenado", Toast.LENGTH_SHORT).show()
                 }.addOnFailureListener{
