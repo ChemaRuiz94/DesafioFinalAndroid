@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,21 +19,26 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.chema.eventoscompartidos.R
-import com.chema.eventoscompartidos.activities.ui.home.HomeViewModel
-import com.chema.eventoscompartidos.databinding.FragmentHomeBinding
 import com.chema.eventoscompartidos.databinding.FragmentProfileBinding
 import com.chema.eventoscompartidos.model.User
 import com.chema.eventoscompartidos.utils.Constantes
+import com.chema.eventoscompartidos.utils.ProviderType
 import com.chema.eventoscompartidos.utils.VariablesCompartidas
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 import java.io.FileNotFoundException
 import java.io.InputStream
+import androidx.core.view.drawToBitmap
+import com.google.android.material.navigation.NavigationView
+import java.io.ByteArrayOutputStream
+import java.lang.Exception
+
 
 class ProfileFragment: Fragment() {
+
+    private val db = FirebaseFirestore.getInstance()
 
     lateinit var btn_change_pwd_profile : Button
     lateinit var flt_btn_edit_profile : FloatingActionButton
@@ -95,6 +101,7 @@ class ProfileFragment: Fragment() {
 
         flt_btn_edit_profile.setOnClickListener{
             //change_to_edit_mode()
+            editar()
         }
 
         cargarDatosUser()
@@ -122,12 +129,87 @@ class ProfileFragment: Fragment() {
             append(userAct.phone.toString())
         }
 
-        //ed_txt_userName_profile.setText(userAct.userName)
-        //ed_txt_email_profile.setText(userAct.email)
-        //ed_txt_phone_profile.setText(userAct.phone)
+        /*
+        if(!userAct.img.toString().equals("") && userAct.img != null){
+            //imgUsuarioPerfil.setBackgroundResource(userAct.img.toString().toInt())
+            val byteArray = userAct.img as ByteArray
+            val bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.count())
+            imgUsuarioPerfil.setImageBitmap(bmp)
+        }
+
+         */
+
+        if(userAct.img != null){
+            var bm : Bitmap? = StringToBitMap(userAct.img)
+            imgUsuarioPerfil.setImageBitmap(bm)
+        }
+
+
     }
 
 
+
+    fun editar(){
+
+
+        if(ed_txt_email_profile.text.trim().isNotEmpty() && ed_txt_phone_profile.text.trim().isNotEmpty() && ed_txt_userName_profile.text.trim().isNotEmpty()){
+
+            //if(txt_provider_admin.text.toString().equals(ProviderType.GOOGLE)){prov = ProviderType.GOOGLE}
+            //if(txt_rol_admin.text.toString().equals("ROL")) {rol = "user"} //ESTO NO ESTA BIEN, PERO POR PROBAR DE MOMENTO
+
+            var prov : ProviderType = userAct.provider
+            var rol = userAct.rol
+            var email_mod = ed_txt_email_profile.text.toString().trim()
+            var userName_mod = ed_txt_userName_profile.text.toString().trim()
+            var phone_mod = ed_txt_phone_profile.text.toString().trim()
+
+            /*
+            val bitmap = (imgUsuarioPerfil.getDrawable() as BitmapDrawable).bitmap
+            val baos = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+            val imageInByte: ByteArray = baos.toByteArray()
+
+
+             */
+            //val imageInByte = imgUsuarioPerfil.imageTintMode.toString().toByteArray()
+
+            //val imageInByte = Auxiliar.getBytes(imgUsuarioPerfil)
+
+            val img : Bitmap = imgUsuarioPerfil.drawToBitmap()
+            val imgST = ImageToString(img)
+
+            //Se guardarán en modo HashMap (clave, valor).
+            var user = hashMapOf(
+                "provider" to prov,
+                "userName" to userName_mod,
+                "email" to email_mod,
+                "phone" to phone_mod,
+                "rol" to rol,
+                "img" to imgST
+            )
+
+
+            db.collection("${Constantes.collectionUser2}")
+                .document(VariablesCompartidas.emailUsuarioActual.toString()) //Será la clave del documento.
+                .set(user).addOnSuccessListener {
+
+
+                        val navigationView: NavigationView =
+                            (context as AppCompatActivity).findViewById(R.id.nav_view)
+                        val header: View = navigationView.getHeaderView(0)
+                        val imgHe = header.findViewById<ImageView>(R.id.img_user_header)
+                        imgHe.setImageBitmap(photo)
+
+
+
+                    //Toast.makeText(this, "Almacenado", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener{
+                    //Toast.makeText(this, "Ha ocurrido un error", Toast.LENGTH_SHORT).show()
+                }
+        }else{
+            //Toast.makeText(this,"Rellene el campo de email de usuario que quiere modificar",Toast.LENGTH_SHORT).show()
+        }
+    }
     fun cambiarContraseña() {
         val dialog = layoutInflater.inflate(R.layout.password_changer, null)
         val pass1 = dialog.findViewById<EditText>(R.id.edPassChanger)
@@ -232,6 +314,24 @@ class ProfileFragment: Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    fun ImageToString(bitmap: Bitmap):String?{
+        val baos = ByteArrayOutputStream()
+        //val bitmap : Bitmap = imgUsuarioPerfil.drawToBitmap()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val imageBytes: ByteArray = baos.toByteArray()
+        var imageString : String? = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+        return imageString
+    }
+    fun StringToBitMap(encodedString: String?): Bitmap? {
+        return try {
+            val encodeByte: ByteArray = Base64.decode(encodedString, Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.size)
+        } catch (e: Exception) {
+            e.message
+            null
         }
     }
 }

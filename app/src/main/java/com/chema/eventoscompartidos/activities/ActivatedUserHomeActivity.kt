@@ -2,11 +2,15 @@ package com.chema.eventoscompartidos.activities
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.AttributeSet
+import android.util.Base64
 import android.view.Menu
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -25,7 +29,7 @@ import com.chema.eventoscompartidos.databinding.ActivityActivatedUserHomeBinding
 import com.chema.eventoscompartidos.fragment.ProfileFragment
 import com.chema.eventoscompartidos.model.User
 import com.chema.eventoscompartidos.utils.VariablesCompartidas
-
+import java.lang.Exception
 
 
 //import com.chema.eventoscompartidos.activities.databinding.ActivityActivatedUserHomeBinding
@@ -77,6 +81,7 @@ class ActivatedUserHomeActivity : AppCompatActivity() {
         val u = VariablesCompartidas.userActual as User
         navUserName.text = u.userName.toString()
 
+        setHeaderImgUser()
     }
 
 
@@ -93,6 +98,29 @@ class ActivatedUserHomeActivity : AppCompatActivity() {
     }
 
 
+    fun setHeaderImgUser(){
+        var u : User? = VariablesCompartidas.userActual
+        if(u?.img != null){
+            var imgST : String? = u?.img.toString()
+            var photo: Bitmap? = StringToBitMap(imgST)
+            val navigationView: NavigationView =
+                (this as AppCompatActivity).findViewById(R.id.nav_view)
+            val header: View = navigationView.getHeaderView(0)
+            val imgHe = header.findViewById<ImageView>(R.id.img_user_header)
+            imgHe.setImageBitmap(photo)
+        }
+
+    }
+
+    fun StringToBitMap(encodedString: String?): Bitmap? {
+        return try {
+            val encodeByte: ByteArray = Base64.decode(encodedString, Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.size)
+        } catch (e: Exception) {
+            e.message
+            null
+        }
+    }
 
     override fun onBackPressed(){
 
