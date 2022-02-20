@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EventosCompartidos">
         <activity
+            android:name=".activities.NewEventoActivity"
+            android:exported="true" />
+        <activity
             android:name=".activities.ActivatedUserHomeActivity"
             android:exported="true"
             android:label="@string/title_activity_activated_user_home"

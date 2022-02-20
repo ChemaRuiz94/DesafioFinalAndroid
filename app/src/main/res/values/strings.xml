@@ -29,6 +29,14 @@
     <string name="action_settings">Settings</string>
     <string name="changePassword">Change Password</string>
 
+    <string name="asistentesEvento">Attendees to the event</string>
+    <string name="nuevoEvento">New event</string>
+    <string name="nameEvento">Event Name...</string>
+    <string name="Date">Date</string>
+    <string name="Hour">Hour</string>
+    <string name="location">location</string>
+    <string name="changeLocation">Change location</string>
+
     <string name="chosePhoto">Chose phote</string>
     <string name="strMensajeElegirFoto">How do you want to add the photo?</string>
     <string name="strCamara">Camera</string>
