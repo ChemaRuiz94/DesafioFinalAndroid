@@ -24,4 +24,13 @@
         <item name="cornerRadius">10dp</item>
     </style>
 
+    <style name="Theme.EventosCompartidos.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.EventosCompartidos.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.EventosCompartidos.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 </resources>

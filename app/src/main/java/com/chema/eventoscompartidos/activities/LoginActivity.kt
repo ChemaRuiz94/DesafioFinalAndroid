@@ -134,6 +134,7 @@ class LoginActivity : AppCompatActivity() {
         for (u in usuarios){
             if(u.email.equals(VariablesCompartidas.emailUsuarioActual)){
                 VariablesCompartidas.rolUsuarioActual = u.rol
+                VariablesCompartidas.userActual = u
             }
         }
 
@@ -144,7 +145,11 @@ class LoginActivity : AppCompatActivity() {
             startActivity(myIntent)
 
         }else if(VariablesCompartidas.rolUsuarioActual.equals("activated_user")){
-            Toast.makeText(this, "USUARIO ACTIVADO", Toast.LENGTH_SHORT).show()
+
+            //Toast.makeText(this, "USUARIO ACTIVADO", Toast.LENGTH_SHORT).show()
+            var myIntent = Intent(this,ActivatedUserHomeActivity::class.java)
+            startActivity(myIntent)
+
         }else{
             Toast.makeText(this, "USUARIO ADMIN", Toast.LENGTH_SHORT).show()
         }
