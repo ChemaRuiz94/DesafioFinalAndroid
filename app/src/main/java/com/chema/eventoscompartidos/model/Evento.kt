@@ -1,12 +1,13 @@
 package com.chema.eventoscompartidos.model
 
+import com.google.android.gms.maps.model.LatLng
 import java.io.Serializable
 
 data class Evento(
     var nombreEvento: String?,
     var fecha: String?,
     var hora: String?,
-    var ubicacion: String?,
+    var ubicacion: LatLng?,
     var latUbi: String?,
     var lonUbi: String?,
     var emailAsistentes: ArrayList<String>?,

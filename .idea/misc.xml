@@ -9,7 +9,8 @@
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/activity_home.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/activity_login.xml" value="0.2259963768115942" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/activity_main.xml" value="0.24728260869565216" />
-        <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/activity_new_evento.xml" value="0.264" />
+        <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/activity_maps.xml" value="0.22644927536231885" />
+        <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/activity_new_evento.xml" value="0.536" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/activity_sign_up.xml" value="0.264" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/admin_layout.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/app_bar_activated_user_home.xml" value="0.25416666666666665" />
@@ -17,15 +18,18 @@
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/fragment_events.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/fragment_gallery.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/fragment_home.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/fragment_new_event_maps.xml" value="0.22010869565217392" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/fragment_profile.xml" value="0.4" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/fragment_slideshow.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/fragment_user_activated.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/item_evento_layout.xml" value="0.22010869565217392" />
+        <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/item_evento_layout.xml" value="0.264" />
+        <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/item_user_layout.xml" value="0.22010869565217392" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/nav_header_activated_user_home.xml" value="0.4" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/password_changer.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/layout/user_not_activated_layout.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/menu/activated_user_home.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/menu/activity_main_drawer.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Chema/ProyectosAndroid/DesafioFinalAndroid_ChemaRuiz/DesafioFinalAndroid/app/src/main/res/menu/map_menu.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>

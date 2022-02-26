@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.NewEventoActivity">
+    tools:context=".activities.NewEventoActivity"
+    android:id="@+id/new_event_activ">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_usuarios"
@@ -49,8 +50,9 @@
         android:editable="false"
         android:ems="10"
         android:enabled="false"
+        android:hint="@string/Date"
         android:inputType="textPersonName"
-        android:text="@string/Date"
+        android:minHeight="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.059"
@@ -80,7 +82,7 @@
         app:layout_constraintHorizontal_bias="0.899"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.567" />
+        app:layout_constraintVertical_bias="0.552" />
 
     <EditText
         android:id="@+id/ed_txt_hora"
@@ -89,26 +91,41 @@
         android:editable="false"
         android:ems="10"
         android:enabled="false"
+        android:hint="@string/Hour"
         android:inputType="textPersonName"
-        android:text="@string/Hour"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.059"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.565" />
+        app:layout_constraintVertical_bias="0.551" />
 
-    <fragment
-        android:id="@+id/frm_MapLocarion"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="250dp"
-        android:layout_height="200dp"
+    <Button
+        android:id="@+id/btn_ubicacion"
+        android:layout_width="123dp"
+        android:layout_height="47dp"
+        android:text="@string/location"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.434"
+        app:layout_constraintHorizontal_bias="0.899"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.845" />
+        app:layout_constraintVertical_bias="0.649" />
+
+    <EditText
+        android:id="@+id/ed_txt_ubicacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:enabled="false"
+        android:hint="@string/location"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.054"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.647" />
 
     <Button
         android:id="@+id/btn_change_location"
@@ -134,5 +151,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.023"
         app:srcCompat="@drawable/ic_menu_event" />
+
+    <fragment
+        android:id="@+id/frm_MapLocation"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="374dp"
+        android:layout_height="161dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.432"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.882"
+        tools:context=".activities.NewEventoActivity"
+        tools:layout="@layout/fragment_new_event_maps" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,12 +13,15 @@
     <string name="emptyCamps">Complete all fields</string>
     <string name="samePassword">The Passwords not coincide</string>
     <string name="phoneNotCorrect">The Phone format is not correct</string>
+
     <string name="ERROR">ERROR</string>
     <string name="aceptar">Aceptar</string>
     <string name="cancelar">Cancelar</string>
     <string name="ocurridoErrorAutenticacion">Se ha producido un error autenticando al usuairo</string>
     <string name="SignUpSuscesfull">SignUp Suscesfull</string>
     <string name="Suscesfull">Suscesfull</string>
+
+
     <string name="UserNotActivated">Your profile will be activated soon</string>
     <string name="title_activity_activated_user_home">ActivatedUserHomeActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -34,8 +37,9 @@
     <string name="nameEvento">Event Name...</string>
     <string name="Date">Date</string>
     <string name="Hour">Hour</string>
-    <string name="location">location</string>
+    <string name="location">Location</string>
     <string name="changeLocation">Change location</string>
+    <string name="noAsiste">No asiste</string>
 
     <string name="chosePhoto">Chose phote</string>
     <string name="strMensajeElegirFoto">How do you want to add the photo?</string>
@@ -43,9 +47,14 @@
     <string name="strGaleria">Gallery</string>
 
 
+    <string name="satellite_mode">Satellite Mode</string>
+    <string name="normal_mode">Normal Mode</string>
+    <string name="hybrid_mode">Hybrid Mode</string>
+
     <string name="menu_home">Home</string>
     <string name="menu_profile">Profile</string>
     <string name="my_events">My Events</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>

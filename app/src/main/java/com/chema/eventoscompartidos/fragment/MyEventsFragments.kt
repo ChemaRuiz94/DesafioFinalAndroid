@@ -1,6 +1,7 @@
 package com.chema.eventoscompartidos.fragment
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.chema.eventoscompartidos.R
+import com.chema.eventoscompartidos.activities.NewEventoActivity
 import com.chema.eventoscompartidos.databinding.FragmentEventsBinding
 import com.chema.eventoscompartidos.databinding.FragmentProfileBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -56,7 +58,8 @@ class MyEventsFragments : Fragment() {
         fl_btn_new_event = view.findViewById(R.id.fl_btn_new_event)
 
         fl_btn_new_event.setOnClickListener{
-            Toast.makeText(requireContext(),"Nuevo EVENTO",Toast.LENGTH_SHORT).show()
+            var intetnNewEvent = Intent(requireContext(),NewEventoActivity::class.java)
+            startActivity(intetnNewEvent)
         }
 
         //cargarDatosUser()

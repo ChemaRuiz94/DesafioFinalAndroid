@@ -6,6 +6,8 @@ object Constantes {
     val collectionUser3 = "users3"
     val collectionUser4 = "users4"
 
+    val collectionEvents = "events"
+
     val rolAdmin = "admin"
     val rolUserActivated = "activated_user"
     val rolUserNotActivated = "user"
