@@ -144,8 +144,8 @@ class ProfileFragment: Fragment() {
             //if(txt_provider_admin.text.toString().equals(ProviderType.GOOGLE)){prov = ProviderType.GOOGLE}
             //if(txt_rol_admin.text.toString().equals("ROL")) {rol = "user"} //ESTO NO ESTA BIEN, PERO POR PROBAR DE MOMENTO
 
-            var prov : ProviderType = userAct.provider
-            var rol = userAct.rol
+//            var prov : ProviderType = userAct.provider
+//            var rol = userAct.rol
             var email_mod = ed_txt_email_profile.text.toString().trim()
             var userName_mod = ed_txt_userName_profile.text.toString().trim()
             var phone_mod = ed_txt_phone_profile.text.toString().trim().toInt()
@@ -156,24 +156,26 @@ class ProfileFragment: Fragment() {
 
             //Se guardarán en modo HashMap (clave, valor).
             var user = hashMapOf(
-                "provider" to prov,
+                "userId" to id,
                 "userName" to userName_mod,
                 "email" to email_mod,
                 "phone" to phone_mod,
-                "rol" to rol,
-                "img" to imgST
+                "rol" to userAct.rol,
+                "activo" to false,
+                "img" to img,
+                "eventos" to userAct.eventos
             )
 
-            var us = User(prov,userName_mod,email_mod,phone_mod,rol,imgST)
+//            var us = User(prov,userName_mod,email_mod,phone_mod,rol,imgST)
 
 
-            db.collection("${Constantes.collectionUser2}")
+            db.collection("${Constantes.collectionUser}")
                 .document(VariablesCompartidas.emailUsuarioActual.toString()) //Será la clave del documento.
                 .set(user).addOnSuccessListener {
 
                     //val us : User = user as User
-                    userAct = us
-                    VariablesCompartidas.userActual = us 
+                    userAct = user as User
+                    VariablesCompartidas.userActual = user
 
                     val navigationView: NavigationView =
                         (context as AppCompatActivity).findViewById(R.id.nav_view)

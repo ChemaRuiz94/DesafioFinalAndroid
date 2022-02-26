@@ -83,7 +83,6 @@
         app:layout_constraintVertical_bias="0.593" />
 
 
-
     <Button
         android:id="@+id/btn_confirmar_signUp"
         style="@style/btn_basic_style"
@@ -96,5 +95,17 @@
         app:layout_constraintHorizontal_bias="0.445"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.835" />
+        app:layout_constraintVertical_bias="0.932" />
+
+    <Button
+        android:id="@+id/btn_google_signUp"
+        android:layout_width="169dp"
+        android:layout_height="57dp"
+        android:text="SignUp GOOGLE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.752" />
 </androidx.constraintlayout.widget.ConstraintLayout>

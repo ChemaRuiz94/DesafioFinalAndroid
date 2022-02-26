@@ -10,28 +10,40 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.chema.eventoscompartidos.R
+import com.chema.eventoscompartidos.model.Evento
+import com.chema.eventoscompartidos.model.Rol
+import com.chema.eventoscompartidos.model.User
 import com.chema.eventoscompartidos.utils.Constantes
 import com.chema.eventoscompartidos.utils.ProviderType
 import com.chema.eventoscompartidos.utils.VariablesCompartidas
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.*
 
 class SignUpActivity : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
 
     private lateinit var btn_confirmar_signUp: Button
+    private lateinit var btn_google_signUp: Button
     private lateinit var ed_txt_userName_signUp: EditText
     private lateinit var ed_txt_email_signUp: EditText
     private lateinit var ed_txt_pwd_signUp: EditText
     private lateinit var ed_txt_pwd2_signUp: EditText
     private lateinit var ed_txt_phone_signUp: EditText
+    private var RC_SIGN_IN = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
 
         btn_confirmar_signUp = findViewById(R.id.btn_confirmar_signUp)
+        btn_google_signUp = findViewById(R.id.btn_google_signUp)
         ed_txt_userName_signUp = findViewById(R.id.ed_txt_userName_signUp)
         ed_txt_email_signUp = findViewById(R.id.ed_txt_email_signUp)
         ed_txt_pwd_signUp = findViewById(R.id.ed_txt_pwd_signUp)
@@ -41,6 +53,10 @@ class SignUpActivity : AppCompatActivity() {
 
         btn_confirmar_signUp.setOnClickListener{
             check_signUp_correcto()
+        }
+
+        btn_google_signUp.setOnClickListener{
+            reg_google()
         }
     }
 
@@ -127,13 +143,13 @@ class SignUpActivity : AppCompatActivity() {
     Autenticacion Firebase
      */
     private fun check_firebase_auth(){
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(ed_txt_email_signUp.text.toString(),ed_txt_pwd_signUp.text.toString()).addOnCompleteListener {
+        val email = ed_txt_email_signUp.text.toString()
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword( email,ed_txt_pwd_signUp.text.toString()).addOnCompleteListener {
             if (it.isSuccessful){
-                reg_user() //guardamos el usuario
+                reg_user(email) //guardamos el usuario
                 VariablesCompartidas.emailUsuarioActual = (it.result?.user?.email?:"")
                 Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
-                var myIntent = Intent(this,HomeActivity::class.java)
-                startActivity(myIntent)
+
             } else {
                 showAlert()
             }
@@ -143,29 +159,81 @@ class SignUpActivity : AppCompatActivity() {
     /*
     Registrar un usuario en FireStore
      */
-    private fun reg_user(){
-        val rol = "activated_user"
+    private fun reg_user(email: String){
+        val rol =  Rol(2 , "${Constantes.rolUser}")
+        var listRoles : ArrayList<Rol> = ArrayList()
+        listRoles.add(rol)
         var img : String? = null
-        val email = ed_txt_email_signUp.text.toString()
-
+        var eventos : ArrayList<Evento> = ArrayList()
+        val id = UUID.randomUUID()
 
         //Se guardarán en modo HashMap (clave, valor).
         var user = hashMapOf(
-            "provider" to ProviderType.BASIC,
+            "userId" to id,
             "userName" to ed_txt_userName_signUp.text.toString().trim(),
             "email" to email,
             "phone" to ed_txt_phone_signUp.text.toString().trim(),
-            "rol" to rol,
-            "img" to img
+            "rol" to listRoles,
+            "activo" to false,
+            "img" to img,
+            "eventos" to eventos
         )
 
-        db.collection("${Constantes.collectionUser2}")
-            .document(email) //Será la clave del documento.
+        db.collection("${Constantes.collectionUser}")
+            .document(id.toString()) //Será la clave del documento.
             .set(user).addOnSuccessListener {
+                var myIntent = Intent(this,HomeActivity::class.java)
+                startActivity(myIntent)
                 Toast.makeText(this, getString(R.string.SignUpSuscesfull), Toast.LENGTH_SHORT).show()
             }.addOnFailureListener{
                 Toast.makeText(this, getString(R.string.ocurridoErrorAutenticacion), Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun reg_google(){
+        val googleConf = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.request_id_token)) //Esto se encuentra en el archivo google-services.json: client->oauth_client -> client_id
+            .requestEmail()
+            .build()
+
+        val googleClient = GoogleSignIn.getClient(this,googleConf) //Este será el cliente de autenticación de Google.
+        googleClient.signOut() //Con esto salimos de la posible cuenta  de Google que se encuentre logueada.
+        val signInIntent = googleClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Si la respuesta de esta activity se corresponde con la inicializada es que viene de la autenticación de Google.
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                val account = task.getResult(ApiException::class.java)!!
+
+                //Ya tenemos la id de la cuenta. Ahora nos autenticamos con FireBase.
+                if (account != null) {
+                    val credential: AuthCredential = GoogleAuthProvider.getCredential(account.idToken, null)
+                    FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
+                        if (it.isSuccessful){
+
+                            VariablesCompartidas.emailUsuarioActual = account.email?:""
+                            reg_user(account.email?:"")
+                        } else {
+                            showAlert()
+                        }
+                    }
+                }
+                //firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: ApiException) {
+                // Google Sign In failed, update UI appropriately
+
+                showAlert()
+            }
+        }
     }
     private fun showAlert(){
         val builder = AlertDialog.Builder(this)

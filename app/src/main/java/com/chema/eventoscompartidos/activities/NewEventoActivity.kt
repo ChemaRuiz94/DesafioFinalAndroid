@@ -142,16 +142,16 @@ class NewEventoActivity : AppCompatActivity(){
 
                 if(!dc.document.get("provider").toString().equals("BASIC")){prov= ProviderType.GOOGLE}
 
-                var al = User(
-                    prov,
-                    dc.document.get("userName").toString(),
-                    dc.document.get("email").toString(),
-                    dc.document.get("phone").toString().toInt(),
-                    dc.document.get("rol").toString(),
-                    dc.document.get("img").toString()
-                )
+//                var al = User(
+//                    prov,
+//                    dc.document.get("userName").toString(),
+//                    dc.document.get("email").toString(),
+//                    dc.document.get("phone").toString().toInt(),
+//                    dc.document.get("rol").toString(),
+//                    dc.document.get("img").toString()
+//                )
                 //Log.e(TAG, al.toString())
-                usuarios.add(al)
+//                usuarios.add(al)
             }
         }
     }
