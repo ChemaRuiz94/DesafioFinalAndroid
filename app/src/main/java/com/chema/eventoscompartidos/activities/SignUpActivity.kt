@@ -169,7 +169,7 @@ class SignUpActivity : AppCompatActivity() {
 
         //Se guardarán en modo HashMap (clave, valor).
         var user = hashMapOf(
-            "userId" to id,
+            "userId" to id.toString(),
             "userName" to ed_txt_userName_signUp.text.toString().trim(),
             "email" to email,
             "phone" to ed_txt_phone_signUp.text.toString().trim(),

@@ -160,7 +160,6 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("login", "existen usuarios")
                 for (user in users) {
                     var phone = 0;
-                    Log.d("login", "${user.id} => ${user.data}")
                     if (user.get("phone").toString() != ""){
                         phone = user.get("phone").toString().toInt()
                     }
