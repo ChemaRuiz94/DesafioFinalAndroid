@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_profile" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.chema.eventoscompartidos.activities.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_events"
+        android:name="com.chema.eventoscompartidos.fragment.MyEventsFragments"
+        android:label="@string/my_events"
+        tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/nav_slideshow"

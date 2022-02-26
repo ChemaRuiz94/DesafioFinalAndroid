@@ -144,7 +144,7 @@ class SignUpActivity : AppCompatActivity() {
     Registrar un usuario en FireStore
      */
     private fun reg_user(){
-        val rol = "user"
+        val rol = "activated_user"
         var img : String? = null
         val email = ed_txt_email_signUp.text.toString()
 

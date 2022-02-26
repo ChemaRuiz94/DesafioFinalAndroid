@@ -136,8 +136,6 @@ class ProfileFragment: Fragment() {
 
     }
 
-
-
     fun editar(){
 
 
@@ -188,14 +186,15 @@ class ProfileFragment: Fragment() {
                     nameHead.setText(userAct.userName)
                     emailHead.setText(userAct.email)
 
-                    //Toast.makeText(this, "Almacenado", Toast.LENGTH_SHORT).show()
+                    Toast.makeText( requireContext(), "Almacenado", Toast.LENGTH_SHORT).show()
                 }.addOnFailureListener{
-                    //Toast.makeText(this, "Ha ocurrido un error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Ha ocurrido un error", Toast.LENGTH_SHORT).show()
                 }
         }else{
-            //Toast.makeText(this,"Rellene el campo de email de usuario que quiere modificar",Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(),"Rellene los campos que quiere modificar",Toast.LENGTH_SHORT).show()
         }
     }
+
     fun cambiarContraseña() {
         val dialog = layoutInflater.inflate(R.layout.password_changer, null)
         val pass1 = dialog.findViewById<EditText>(R.id.edPassChanger)
@@ -311,6 +310,7 @@ class ProfileFragment: Fragment() {
         var imageString : String? = Base64.encodeToString(imageBytes, Base64.DEFAULT)
         return imageString
     }
+
     fun StringToBitMap(encodedString: String?): Bitmap? {
         return try {
             val encodeByte: ByteArray = Base64.decode(encodedString, Base64.DEFAULT)
