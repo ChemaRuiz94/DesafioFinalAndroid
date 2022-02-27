@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chema.eventoscompartidos.R
@@ -25,10 +26,15 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 import com.chema.eventoscompartidos.model.Evento
+import com.chema.eventoscompartidos.model.Rol
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
 
-class NewEventoActivity : AppCompatActivity(){
+class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
 
     private val db = Firebase.firestore
 
@@ -46,6 +52,7 @@ class NewEventoActivity : AppCompatActivity(){
     //*****************************************
     private var localizacionSeleccionada: String? = null
     private var ubicacionActual : LatLng? = LatLng(-33.852, 151.211) //UBI EN SIDNEY
+    private lateinit var mMap: GoogleMap
     //*****************************************
 
     private var eventoActual : Evento? = null
@@ -70,7 +77,8 @@ class NewEventoActivity : AppCompatActivity(){
         ed_txt_hora = findViewById(R.id.ed_txt_hora)
         ed_txt_titulo_evento = findViewById(R.id.ed_txt_titulo_evento)
         ed_txt_ubicacion = findViewById(R.id.ed_txt_ubicacion)
-        //frm_MapLocation = findViewById(R.id.frm_MapLocation)
+        //var a = findViewById(R.id.fragment_new_event_maps)
+
 
         eventoActual = VariablesCompartidas.eventoActual
 
@@ -87,6 +95,7 @@ class NewEventoActivity : AppCompatActivity(){
         }
 
         cargarRV()
+        cargarMapa()
 
         btn_fecha.setOnClickListener{
             val newFragment = DatePickerFragment(ed_txt_fecha)
@@ -121,9 +130,15 @@ class NewEventoActivity : AppCompatActivity(){
     }
     //*****************************************
 
+    private fun cargarMapa() {
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.frm_MapLocation) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+    }
+
     suspend fun getDataFromFireStore()  : QuerySnapshot? {
         return try{
-            val data = db.collection("${Constantes.collectionUser2}")
+            val data = db.collection("${Constantes.collectionUser}")
                 .get()
                 .await()
             data
@@ -139,19 +154,19 @@ class NewEventoActivity : AppCompatActivity(){
                 //miAr.add(dc.document.toObject(User::class.java))
 
                 var prov = ProviderType.BASIC
+                var user = dc.document.data
 
-                if(!dc.document.get("provider").toString().equals("BASIC")){prov= ProviderType.GOOGLE}
-
-//                var al = User(
-//                    prov,
-//                    dc.document.get("userName").toString(),
-//                    dc.document.get("email").toString(),
-//                    dc.document.get("phone").toString().toInt(),
-//                    dc.document.get("rol").toString(),
-//                    dc.document.get("img").toString()
-//                )
-                //Log.e(TAG, al.toString())
-//                usuarios.add(al)
+                var us = User(
+                    user.get("userId").toString(),
+                    user.get("userName").toString(),
+                    user.get("email").toString(),
+                    user.get("phone").toString().toInt(),
+                    user.get("rol") as ArrayList<Rol>,
+                    user.get("activo") as Boolean,
+                    user.get("img").toString(),
+                    user.get("eventos") as ArrayList<Evento>
+                )
+                usuarios.add(us)
             }
         }
     }
@@ -223,8 +238,7 @@ class NewEventoActivity : AppCompatActivity(){
         var id_evento = "${ed_txt_titulo_evento.text.toString()}"
         //var time = Timestamp(System.currentTimeMillis())
         //val rnds = (0..100).random()
-        //id_evento += "_id${time}${rnds} "
-
+        //id_evento += "_id${time}${rnds} "frm_MapLocation
         db.collection("${Constantes.collectionEvents}")
             .document(id_evento) //Será la clave del documento.
             .set(evento).addOnSuccessListener {
@@ -240,6 +254,22 @@ class NewEventoActivity : AppCompatActivity(){
         if(VariablesCompartidas.latEventoActual != null && VariablesCompartidas.lonEventoActual != null){
             ubicacionActual = LatLng(VariablesCompartidas.latEventoActual.toString().toDouble(),VariablesCompartidas.lonEventoActual.toString().toDouble())
             ed_txt_ubicacion.setText("${ubicacionActual}")
+
+            val ubi = LatLng(VariablesCompartidas.latEventoActual.toString().toDouble(), VariablesCompartidas.lonEventoActual.toString().toDouble())
+            mMap?.addMarker(MarkerOptions().position(ubi).title("kk"))
+            mMap?.moveCamera(CameraUpdateFactory.newLatLng(ubi))
         }
     }
+
+    override fun onMapReady(p0: GoogleMap?) {
+        mMap = p0!!
+        mMap.mapType=GoogleMap.MAP_TYPE_NORMAL
+        //val Kuta = LatLng(12.0, 28.0)
+        val Kuta = LatLng(-33.852, 151.211)
+        mMap?.addMarker(MarkerOptions().position(Kuta).title("kk"))
+        mMap?.moveCamera(CameraUpdateFactory.newLatLng(Kuta))
+    }
+
+
+
 }

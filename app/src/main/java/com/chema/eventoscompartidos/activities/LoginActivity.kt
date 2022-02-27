@@ -174,8 +174,8 @@ class LoginActivity : AppCompatActivity() {
                         user.get("eventos") as ArrayList<Evento>
                     )
                     if(us.activo){
-                        checkUserRol(us)
                         VariablesCompartidas.userActual = us
+                        checkUserRol(us)
                     }
                     else {
                         //usuario no activo mostrar mensaje

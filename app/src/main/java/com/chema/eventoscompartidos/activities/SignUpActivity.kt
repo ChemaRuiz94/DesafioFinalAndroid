@@ -166,13 +166,14 @@ class SignUpActivity : AppCompatActivity() {
         var img : String? = null
         var eventos : ArrayList<Evento> = ArrayList()
         val id = UUID.randomUUID()
+        val phone = 0
 
         //Se guardarán en modo HashMap (clave, valor).
         var user = hashMapOf(
             "userId" to id.toString(),
             "userName" to ed_txt_userName_signUp.text.toString().trim(),
             "email" to email,
-            "phone" to ed_txt_phone_signUp.text.toString().trim(),
+            "phone" to phone,
             "rol" to listRoles,
             "activo" to false,
             "img" to img,
