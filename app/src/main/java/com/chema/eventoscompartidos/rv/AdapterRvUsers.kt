@@ -46,11 +46,13 @@ class AdapterRvUsers (
         if (holder.txt_asiste.text.equals("Asiste")){
             holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_no)
             holder.txt_asiste.text = "No asiste"
-            VariablesCompartidas.usuariosEventoActual.remove(usuarios[position].email)
+            VariablesCompartidas.emailUsuariosEventoActual.remove(usuarios[position].email)
+            VariablesCompartidas.usuariosEventoActual.remove(usuarios[position])
         }else{
             holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_yes)
             holder.txt_asiste.text = "Asiste"
-            VariablesCompartidas.usuariosEventoActual.add(usuarios[position].email)
+            VariablesCompartidas.emailUsuariosEventoActual.add(usuarios[position].email)
+            VariablesCompartidas.usuariosEventoActual.add(usuarios[position])
 
         }
     }

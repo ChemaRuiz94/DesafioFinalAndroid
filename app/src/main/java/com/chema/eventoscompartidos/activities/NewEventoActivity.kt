@@ -26,12 +26,16 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 import com.chema.eventoscompartidos.model.Evento
+import com.chema.eventoscompartidos.model.Opinion
 import com.chema.eventoscompartidos.model.Rol
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
@@ -116,14 +120,13 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
         flt_btn_save_event.setOnClickListener{
             if(check_aceptar()){
                 guardar_evento()
+            }else{
+                Toast.makeText(this,getString(R.string.emptyCamps), Toast.LENGTH_SHORT).show()
             }
         }
     }
     //*****************************************
-    override fun onRestart() {
-        super.onRestart()
-        cambiar_UbicacionActual()
-    }
+
     override fun onResume() {
         super.onResume()
         cambiar_UbicacionActual()
@@ -188,21 +191,21 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
 
         if(ed_txt_titulo_evento.text.isEmpty()){
             correcto = false
-            Toast.makeText(this,"Ponle un titulo al evento", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this,"Ponle un titulo al evento", Toast.LENGTH_SHORT).show()
         }
         if(ed_txt_hora.text.isEmpty()){
             correcto = false
-            Toast.makeText(this,"Seleccione una hora", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this,"Seleccione una hora", Toast.LENGTH_SHORT).show()
         }
 
         if(ed_txt_fecha.text.isEmpty()){
             correcto = false
-            Toast.makeText(this,"Seleccione una fecha", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this,"Seleccione una fecha", Toast.LENGTH_SHORT).show()
         }
 
         if(ed_txt_ubicacion.text.isEmpty()){
             correcto = false
-            Toast.makeText(this,"Seleccione una ubicacion", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this,"Seleccione una ubicacion", Toast.LENGTH_SHORT).show()
         }
         /*
         if(localizacionSeleccionada != null){
@@ -214,27 +217,40 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
 
         if(VariablesCompartidas.usuariosEventoActual.size<0){
             correcto = false
-            Toast.makeText(this,"Añade por lo menos un invitado", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this,"Añade por lo menos un invitado", Toast.LENGTH_SHORT).show()
         }
 
         return correcto
     }
 
     private fun guardar_evento(){
-        var userLlegados = ArrayList<String>()
-        var horaUserLlegados = ArrayList<String>()
+        //VariablesCompartidas.usuariosEventoActual.add(VariablesCompartidas.userActual!!)
+        //VariablesCompartidas.emailUsuariosEventoActual.add(VariablesCompartidas.emailUsuarioActual.toString())
+
+        val idEv = UUID.randomUUID()
+        val fecha: Calendar = Calendar.getInstance()
+        val idAsistentesHora: HashMap<UUID,Date>? = HashMap<UUID,Date>()
+        var listaOpiniones: ArrayList<Opinion>? = ArrayList()
+
         var evento = hashMapOf(
 
+            "idEvento" to idEv.toString(),
             "nombreEvento" to ed_txt_titulo_evento.text.toString(),
-            "fecha" to ed_txt_fecha.text.toString().trim(),
-            "hora" to ed_txt_hora.text.toString().trim(),
-            "ubicacion" to VariablesCompartidas.marcadorActual,
+            "horaEvento" to VariablesCompartidas.horaEventoActual,
+            "minEvento" to VariablesCompartidas.minutoEventoActual,
+            "diaEvento" to VariablesCompartidas.diaEventoActual,
+            "mesEvento" to VariablesCompartidas.mesEventoActual,
+            "yearEvento" to VariablesCompartidas.yearEventoActual,
             "latUbi" to VariablesCompartidas.latEventoActual,
             "lonUbi" to VariablesCompartidas.lonEventoActual,
-            "emailAsistentes" to VariablesCompartidas.usuariosEventoActual,
-            "emailAsistentesLlegada" to userLlegados,
-            "asistentesLlegadaHora" to horaUserLlegados,
+            "asistentes" to VariablesCompartidas.usuariosEventoActual,
+            "emailAsistentes" to VariablesCompartidas.emailUsuariosEventoActual,
+            "idAsistentesHora" to idAsistentesHora,
+            "listaOpiniones" to listaOpiniones,
+
         )
+
+
         var id_evento = "${ed_txt_titulo_evento.text.toString()}"
         //var time = Timestamp(System.currentTimeMillis())
         //val rnds = (0..100).random()
@@ -268,6 +284,7 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
         val Kuta = LatLng(-33.852, 151.211)
         mMap?.addMarker(MarkerOptions().position(Kuta).title("kk"))
         mMap?.moveCamera(CameraUpdateFactory.newLatLng(Kuta))
+
     }
 
 

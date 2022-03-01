@@ -28,7 +28,9 @@ class TimePickerFragment (val editText: EditText) : DialogFragment(),
     @SuppressLint("SetTextI18n")
     override fun onTimeSet(view: TimePicker?, hourOfDay: Int, minute: Int) {
         val hora = String.format("%02d", hourOfDay)
+        VariablesCompartidas.horaEventoActual = hourOfDay
         val minuto = String.format("%02d", minute + 1)
+        VariablesCompartidas.minutoEventoActual = minute
         editText!!.setText("$hora:$minuto")
     }
 

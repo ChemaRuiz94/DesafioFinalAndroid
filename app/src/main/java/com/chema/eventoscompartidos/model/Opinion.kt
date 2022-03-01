@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng
 import java.util.*
 
 data class Opinion(
-    var idOpinion: UUID = UUID.randomUUID(),
+    var idOpinion: String?,
     var comentario: String?,
     var foto: String?,
     var lugarInteres: LatLng?,

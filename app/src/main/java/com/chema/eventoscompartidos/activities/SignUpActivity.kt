@@ -146,7 +146,7 @@ class SignUpActivity : AppCompatActivity() {
         val email = ed_txt_email_signUp.text.toString()
         FirebaseAuth.getInstance().createUserWithEmailAndPassword( email,ed_txt_pwd_signUp.text.toString()).addOnCompleteListener {
             if (it.isSuccessful){
-                reg_user(email) //guardamos el usuario
+                reg_user(email,ed_txt_userName_signUp.text.toString()) //guardamos el usuario
                 VariablesCompartidas.emailUsuarioActual = (it.result?.user?.email?:"")
                 Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
 
@@ -159,7 +159,7 @@ class SignUpActivity : AppCompatActivity() {
     /*
     Registrar un usuario en FireStore
      */
-    private fun reg_user(email: String){
+    private fun reg_user(email: String, name: String){
         val rol =  Rol(2 , "${Constantes.rolUser}")
         var listRoles : ArrayList<Rol> = ArrayList()
         listRoles.add(rol)
@@ -171,7 +171,7 @@ class SignUpActivity : AppCompatActivity() {
         //Se guardarán en modo HashMap (clave, valor).
         var user = hashMapOf(
             "userId" to id.toString(),
-            "userName" to ed_txt_userName_signUp.text.toString().trim(),
+            "userName" to name,
             "email" to email,
             "phone" to phone,
             "rol" to listRoles,
@@ -222,7 +222,7 @@ class SignUpActivity : AppCompatActivity() {
                         if (it.isSuccessful){
 
                             VariablesCompartidas.emailUsuarioActual = account.email?:""
-                            reg_user(account.email?:"")
+                            reg_user(account.email?:"", account.displayName?:"")
                         } else {
                             showAlert()
                         }
