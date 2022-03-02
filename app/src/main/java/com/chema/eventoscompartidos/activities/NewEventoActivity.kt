@@ -46,7 +46,6 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
     private lateinit var btn_change_location : Button
     private lateinit var btn_fecha: Button
     private lateinit var btn_hora: Button
-    private lateinit var btn_ubicacion: Button
 
     private lateinit var ed_txt_fecha: EditText
     private lateinit var ed_txt_titulo_evento: EditText
@@ -75,7 +74,6 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
         btn_fecha = findViewById(R.id.btn_fecha)
         ed_txt_fecha = findViewById(R.id.ed_txt_fecha)
         btn_hora = findViewById(R.id.btn_hora)
-        btn_ubicacion = findViewById(R.id.btn_ubicacion)
         flt_btn_save_event = findViewById(R.id.flt_btn_save_event)
         btn_change_location = findViewById(R.id.btn_change_location)
         ed_txt_hora = findViewById(R.id.ed_txt_hora)
@@ -110,7 +108,8 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
             newFragment.show(supportFragmentManager, "timePicker")
         }
 
-        btn_ubicacion.setOnClickListener{
+
+        btn_change_location.setOnClickListener{
             val mapIntent = Intent(this, MapsActivity::class.java).apply {
                 //putExtra("email",email)
             }
@@ -207,13 +206,6 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
             correcto = false
             //Toast.makeText(this,"Seleccione una ubicacion", Toast.LENGTH_SHORT).show()
         }
-        /*
-        if(localizacionSeleccionada != null){
-            correcto = false
-            Toast.makeText(this,"Seleccione una ubicacion", Toast.LENGTH_SHORT).show()
-        }
-
-         */
 
         if(VariablesCompartidas.usuariosEventoActual.size<0){
             correcto = false
@@ -227,14 +219,14 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
         //VariablesCompartidas.usuariosEventoActual.add(VariablesCompartidas.userActual!!)
         //VariablesCompartidas.emailUsuariosEventoActual.add(VariablesCompartidas.emailUsuarioActual.toString())
 
-        val idEv = UUID.randomUUID()
+        val idEv = UUID.randomUUID().toString()
         val fecha: Calendar = Calendar.getInstance()
         val idAsistentesHora: HashMap<UUID,Date>? = HashMap<UUID,Date>()
         var listaOpiniones: ArrayList<Opinion>? = ArrayList()
 
         var evento = hashMapOf(
 
-            "idEvento" to idEv.toString(),
+            "idEvento" to idEv,
             "nombreEvento" to ed_txt_titulo_evento.text.toString(),
             "horaEvento" to VariablesCompartidas.horaEventoActual,
             "minEvento" to VariablesCompartidas.minutoEventoActual,
@@ -250,13 +242,8 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
 
         )
 
-
-        var id_evento = "${ed_txt_titulo_evento.text.toString()}"
-        //var time = Timestamp(System.currentTimeMillis())
-        //val rnds = (0..100).random()
-        //id_evento += "_id${time}${rnds} "frm_MapLocation
         db.collection("${Constantes.collectionEvents}")
-            .document(id_evento) //Será la clave del documento.
+            .document(idEv) //Será la clave del documento.
             .set(evento).addOnSuccessListener {
                 Toast.makeText(this, getString(R.string.Suscesfull), Toast.LENGTH_SHORT).show()
                 finish()
@@ -273,7 +260,7 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
 
             val ubi = LatLng(VariablesCompartidas.latEventoActual.toString().toDouble(), VariablesCompartidas.lonEventoActual.toString().toDouble())
             mMap?.addMarker(MarkerOptions().position(ubi).title("kk"))
-            mMap?.moveCamera(CameraUpdateFactory.newLatLng(ubi))
+            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubi,15f))
         }
     }
 

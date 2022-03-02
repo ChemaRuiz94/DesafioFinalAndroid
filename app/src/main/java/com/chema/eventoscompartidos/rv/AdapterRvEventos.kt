@@ -1,5 +1,6 @@
 package com.chema.eventoscompartidos.rv
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.chema.eventoscompartidos.R
 import com.chema.eventoscompartidos.activities.ActivatedUserHomeActivity
+import com.chema.eventoscompartidos.activities.DetalleEventoActivity
 import com.chema.eventoscompartidos.fragment.MyEventsFragments
 import com.chema.eventoscompartidos.model.Evento
+import com.chema.eventoscompartidos.utils.VariablesCompartidas
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import kotlin.collections.ArrayList
@@ -48,8 +51,16 @@ class AdapterRvEventos(
         holder.hora_evento.text = "${fechaHora}:${fechaMin}"
 
 
+        holder.itemView.setOnClickListener{
+            val homeIntent = Intent(context, DetalleEventoActivity::class.java).apply {
+                VariablesCompartidas.eventoActual = evento
+                putExtra("idEventoActual",evento.idEvento)
+            }
+            context.startActivity(homeIntent)
+        }
 
     }
+
 
     //************************
     class ViewHolderEvento(view: View) : RecyclerView.ViewHolder(view) {

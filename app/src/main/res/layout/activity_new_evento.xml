@@ -100,32 +100,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.551" />
 
-    <Button
-        android:id="@+id/btn_ubicacion"
-        android:layout_width="123dp"
-        android:layout_height="47dp"
-        android:text="@string/location"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.899"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.649" />
-
     <EditText
         android:id="@+id/ed_txt_ubicacion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="379dp"
+        android:layout_height="51dp"
         android:ems="10"
         android:enabled="false"
         android:hint="@string/location"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.054"
+        app:layout_constraintHorizontal_bias="0.343"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.647" />
+        app:layout_constraintVertical_bias="0.644" />
 
     <Button
         android:id="@+id/btn_change_location"

@@ -32,6 +32,8 @@
             android:hint="@string/email"
             android:inputType="textEmailAddress"
             android:minHeight="48dp"
+            android:paddingStart="4dp"
+            android:paddingLeft="4dp"
             tools:ignore="SpeakableTextPresentCheck" />
 
         <EditText
@@ -43,6 +45,8 @@
             android:hint="@string/password"
             android:inputType="textPassword"
             android:minHeight="48dp"
+            android:paddingStart="4dp"
+            android:paddingLeft="4dp"
             tools:ignore="SpeakableTextPresentCheck" />
 
         <Space

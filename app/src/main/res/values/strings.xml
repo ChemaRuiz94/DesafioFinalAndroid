@@ -45,6 +45,8 @@
     <string name="strMensajeElegirFoto">How do you want to add the photo?</string>
     <string name="strCamara">Camera</string>
     <string name="strGaleria">Gallery</string>
+    <string name="addPhoto">Add Photo</string>
+    <string name="addLocation">Add Location</string>
 
 
     <string name="satellite_mode">Satellite Mode</string>

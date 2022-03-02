@@ -162,40 +162,5 @@ class ActivatedUserHomeActivity : AppCompatActivity() {
     }
 
     //********************
-    suspend fun getDataFromFireStore()  : QuerySnapshot? {
-        return try{
-            val data = db.collection("${Constantes.collectionEvents}")
-                .get()
-                .await()
-            data
-        }catch (e : Exception){
-            null
-        }
-    }
 
-    private fun obtenerDatos(datos: QuerySnapshot?) {
-        VariablesCompartidas.eventosUserActual.clear()
-        for(dc: DocumentChange in datos?.documentChanges!!){
-            if (dc.type == DocumentChange.Type.ADDED){
-
-                var al = Evento(
-                    dc.document.get("idEvento").toString(),
-                    dc.document.get("nombreEvento").toString(),
-                    dc.document.get("horaEvento").toString().toInt(),
-                    dc.document.get("minEvento").toString().toInt(),
-                    dc.document.get("diaEvento").toString().toInt(),
-                    dc.document.get("mesEvento").toString().toInt(),
-                    dc.document.get("yearEvento").toString().toInt(),
-                    dc.document.get("latUbi").toString(),
-                    dc.document.get("lonUbi").toString(),
-                    dc.document.get("asistentes") as ArrayList<User>,
-                    dc.document.get("emailAsistentes") as ArrayList<String>,
-                    dc.document.get("idAsistentesHora") as HashMap<UUID, Date>,
-                    dc.document.get("listaOpiniones") as ArrayList<Opinion>
-                )
-                //Log.e(TAG, al.toString())
-                VariablesCompartidas.eventosUserActual.add(al)
-            }
-        }
-    }
 }

@@ -5,6 +5,7 @@ object Constantes {
     val collectionUser2 = "users2"
 
     val collectionEvents = "events"
+    val collectionOpiniones = "opiniones"
 
     const val COLLECTION_ROL = "roles"
 
