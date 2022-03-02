@@ -1,5 +1,6 @@
 package com.chema.eventoscompartidos.activities
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +11,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.chema.eventoscompartidos.R
+import com.chema.eventoscompartidos.model.Evento
+import com.chema.eventoscompartidos.model.Rol
 import com.chema.eventoscompartidos.model.User
 import com.chema.eventoscompartidos.utils.Constantes
 import com.chema.eventoscompartidos.utils.ProviderType
@@ -20,9 +23,11 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -32,6 +37,8 @@ import java.lang.Exception
 
 class LoginActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
+    private lateinit var auth: FirebaseAuth
+
     private var RC_SIGN_IN = 1
 
     private var usuarios = ArrayList<User>()
@@ -52,16 +59,19 @@ class LoginActivity : AppCompatActivity() {
         txt_email = findViewById(R.id.ed_txt_Email_login)
         txt_pwd = findViewById(R.id.ed_txt_Pass_login)
 
-        runBlocking {
-            Log.e("preuba2","Prueba2")
-            val job2 : Job = launch(context = Dispatchers.Default) {
-                val datos2 : QuerySnapshot = getDataFromFireStore2() as QuerySnapshot //Obtenermos la colección
-                Log.e("preuba1",datos2.toString())
-                obtenerDatos2(datos2 as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
-            }
-            //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
-            job2.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
-        }
+        auth = Firebase.auth
+
+
+//        runBlocking {
+//            Log.e("preuba2","Prueba2")
+//            val job2 : Job = launch(context = Dispatchers.Default) {
+//                val datos2 : QuerySnapshot = getDataFromFireStore2() as QuerySnapshot //Obtenermos la colección
+//                Log.e("preuba1",datos2.toString())
+//                obtenerDatos2(datos2 as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
+//            }
+//            //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
+//            job2.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
+//        }
 
 
         btn_signUp.setOnClickListener{
@@ -81,12 +91,15 @@ class LoginActivity : AppCompatActivity() {
     private fun check_login(){
         if(chekc_campos_vacios()){
 
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(txt_email.text.toString(),txt_pwd.text.toString()).addOnCompleteListener {
+            val email = txt_email.text.toString()
+            val pwd = txt_pwd.text.toString()
+
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email,pwd).addOnCompleteListener {
                 if (it.isSuccessful){
 
                     VariablesCompartidas.emailUsuarioActual = (it.result?.user?.email?:"")
 
-                    check_user_rol()
+                    findUserByEmail(email)
 
                 } else {
                     showAlert()
@@ -98,9 +111,88 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkUserRol(user: User){
+//        val roles = findAllRoles()
+        if(user.rol.size > 1) {
+            //es admin
+            Toast.makeText(this, "USUARIO ADMIN", Toast.LENGTH_SHORT).show()
+            var myIntent = Intent(this, ActivatedUserHomeActivity::class.java)
+            startActivity(myIntent)
+        }
+        else {
+            //vamos usuario activity
+            var myIntent = Intent(this, ActivatedUserHomeActivity::class.java)
+            startActivity(myIntent)
+        }
+
+    }
+
+    private fun findAllRoles(): ArrayList<Rol>{
+        var rolesBd : ArrayList<Rol> = ArrayList()
+        db.collection("${Constantes.COLLECTION_ROL}")
+            .get()
+            .addOnSuccessListener { roles ->
+                //Existe
+                for (rol in roles) {
+                    Log.d(TAG, "${rol.id} => ${rol.data}")
+                    var rolBD = Rol(
+                        rol.get("idRol").toString().toInt(),
+                        rol.get("nombreRol").toString()
+                    )
+                    rolesBd.add(rolBD)
+                }
+            }
+            .addOnFailureListener { exception ->
+                //No existe
+                Log.w(TAG, "Error getting documents: ", exception)
+            }
+        return rolesBd
+    }
+
+    private fun findUserByEmail(email: String){
+
+        Toast.makeText(this, email, Toast.LENGTH_SHORT).show()
+        db.collection("${Constantes.collectionUser}")
+            .whereEqualTo("email", email)
+            .get()
+            .addOnSuccessListener { users ->
+                //Existe
+                Log.d("login", "existen usuarios")
+                for (user in users) {
+                    var phone = 0;
+                    if (user.get("phone").toString() != ""){
+                        phone = user.get("phone").toString().toInt()
+                    }
+                    var us = User(
+                        user.get("userId").toString(),
+                        user.get("userName").toString(),
+                        user.get("email").toString(),
+                        phone,
+                        user.get("rol") as ArrayList<Rol>,
+                        user.get("activo") as Boolean,
+                        user.get("img").toString(),
+                        user.get("eventos") as ArrayList<Evento>
+                    )
+                    if(us.activo){
+                        VariablesCompartidas.userActual = us
+                        checkUserRol(us)
+                    }
+                    else {
+                        //usuario no activo mostrar mensaje
+                        var myIntent = Intent(this, HomeActivity::class.java)
+                        startActivity(myIntent)
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                //No existe
+                Log.w(TAG, "Error getting documents: ", exception)
+            }
+    }
+
     suspend fun getDataFromFireStore2()  : QuerySnapshot? {
         return try{
-            val data = db.collection("${Constantes.collectionUser2}")
+            val data = db.collection("${Constantes.collectionUser}")
                 .get()
                 .await()
             data
@@ -118,13 +210,14 @@ class LoginActivity : AppCompatActivity() {
 
                 //var prov = dc.document.get("provider").toString()
                 var al = User(
-                    //prov as ProviderType,
-                    ProviderType.BASIC,
+                    dc.document.get("userId").toString(),
                     dc.document.get("userName").toString(),
                     dc.document.get("email").toString(),
                     dc.document.get("phone").toString().toInt(),
-                    dc.document.get("rol").toString(),
-                    dc.document.get("img").toString()
+                    dc.document.get("rol") as ArrayList<Rol>,
+                    dc.document.get("activo") as Boolean,
+                    dc.document.get("img").toString(),
+                    dc.document.get("eventos") as ArrayList<Evento>
                 )
                 Log.e("CHE","${al.rol}")
                 usuarios.add(al)
@@ -132,10 +225,11 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+
     fun check_user_rol(){
         for (u in usuarios){
             if(u.email.equals(VariablesCompartidas.emailUsuarioActual)){
-                VariablesCompartidas.rolUsuarioActual = u.rol
+//                VariablesCompartidas.rolUsuarioActual = u.rol
                 VariablesCompartidas.userActual = u
             }
         }
@@ -159,6 +253,9 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+
+
+
     private fun chekc_campos_vacios():Boolean{
         var correcto = true
 
@@ -180,7 +277,7 @@ class LoginActivity : AppCompatActivity() {
             .build()
 
         val googleClient = GoogleSignIn.getClient(this,googleConf) //Este será el cliente de autenticación de Google.
-        googleClient.signOut() //Con esto salimos de la posible cuenta  de Google que se encuentre logueada.
+//        googleClient.signOut() //Con esto salimos de la posible cuenta  de Google que se encuentre logueada.
         val signInIntent = googleClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
 
@@ -200,9 +297,14 @@ class LoginActivity : AppCompatActivity() {
                 //Ya tenemos la id de la cuenta. Ahora nos autenticamos con FireBase.
                 if (account != null) {
                     val credential: AuthCredential = GoogleAuthProvider.getCredential(account.idToken, null)
-                    FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
+                    auth.signInWithCredential(credential).addOnCompleteListener {
                         if (it.isSuccessful){
-                            VariablesCompartidas.emailUsuarioActual = account.email?:""
+
+                            Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
+                            val user = auth.currentUser!!
+                            VariablesCompartidas.emailUsuarioActual = user.email!!
+
+                            findUserByEmail(user.email!!)
                             //irHome(account.email?:"")  //Esto de los interrogantes es por si está vacío el email.
                             //Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
                         } else {

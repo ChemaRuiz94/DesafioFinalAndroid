@@ -28,7 +28,10 @@ class DatePickerFragment (val editText: EditText) : DialogFragment(),
     @SuppressLint("SetTextI18n")
     override fun onDateSet(view: DatePicker, year: Int, month: Int, day: Int) {
         val dia = String.format("%02d", day)
-        val mes = String.format("%02d", month + 1)
+        VariablesCompartidas.diaEventoActual = day
+        val mes = String.format("%02d", month+1)
+        VariablesCompartidas.mesEventoActual = month+1
+        VariablesCompartidas.yearEventoActual = year
         editText!!.setText("$dia/$mes/$year")
     }
 }

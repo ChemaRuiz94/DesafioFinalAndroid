@@ -10,10 +10,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.chema.eventoscompartidos.R
+import com.chema.eventoscompartidos.activities.ActivatedUserHomeActivity
+import com.chema.eventoscompartidos.activities.DetalleEventoActivity
+import com.chema.eventoscompartidos.fragment.MyEventsFragments
 import com.chema.eventoscompartidos.model.Evento
+import com.chema.eventoscompartidos.utils.VariablesCompartidas
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.*
+import kotlin.collections.ArrayList
 
-class AdapterRvEventos (
+class AdapterRvEventos(
     private val context: AppCompatActivity,
     private val eventos: ArrayList<Evento>
 ) : RecyclerView.Adapter<AdapterRvEventos.ViewHolderEvento>() {
@@ -30,23 +36,38 @@ class AdapterRvEventos (
     }
 
     override fun onBindViewHolder(holder: AdapterRvEventos.ViewHolderEvento, position: Int) {
-        /*
+
         //holder?.item.text = this.valores!![position].toString()
-        var evento: Evento = eventos[position]
+        val evento: Evento = eventos[position]
+
+        val fechaDia = evento.diaEvento
+        val fechaMes = evento.mesEvento
+        val fechaYear = evento.yearEvento
+        val fechaHora = evento.horaEvento
+        val fechaMin = evento.minEvento
+
         holder.nombre_evento.text = evento.nombreEvento
-        holder.fecha_evento.text = evento.fecha
-        holder.hora_evento.text = evento.hora
+        holder.fecha_evento.text = "${fechaDia}/${fechaMes}/${fechaYear}"
+        holder.hora_evento.text = "${fechaHora}:${fechaMin}"
 
 
-         */
+        holder.itemView.setOnClickListener{
+            val homeIntent = Intent(context, DetalleEventoActivity::class.java).apply {
+                VariablesCompartidas.eventoActual = evento
+                putExtra("idEventoActual",evento.idEvento)
+            }
+            context.startActivity(homeIntent)
+        }
+
     }
+
 
     //************************
     class ViewHolderEvento(view: View) : RecyclerView.ViewHolder(view) {
 
-        //val nombre_evento = view.findViewById<TextView>(R.id.nombreEvento_item)
-        //val fecha_evento = view.findViewById<TextView>(R.id.fechaEvento_item)
-        //val hora_evento = view.findViewById<TextView>(R.id.txt_hora_evento)
+        val nombre_evento = view.findViewById<TextView>(R.id.nombreEvento_item)
+        val fecha_evento = view.findViewById<TextView>(R.id.fechaEvento_item)
+        val hora_evento = view.findViewById<TextView>(R.id.txt_hora_evento)
 
     }
 }

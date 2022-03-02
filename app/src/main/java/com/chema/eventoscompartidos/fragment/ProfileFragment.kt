@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,13 +33,24 @@ import java.io.FileNotFoundException
 import java.io.InputStream
 import androidx.core.view.drawToBitmap
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.lang.Exception
+import java.util.*
 
 
 class ProfileFragment: Fragment() {
 
     private val db = FirebaseFirestore.getInstance()
+    val storage = Firebase.storage("gs://eventoscompartidos-43253.appspot.com")
+
+    private lateinit var auth: FirebaseAuth
+    private lateinit var currentUser: FirebaseUser
 
     lateinit var btn_change_pwd_profile : Button
     lateinit var flt_btn_edit_profile : FloatingActionButton
@@ -67,6 +79,9 @@ class ProfileFragment: Fragment() {
 
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        auth = Firebase.auth
+         currentUser = auth.currentUser!!
 
         /*
         val textView: TextView = binding.textHome
@@ -136,44 +151,66 @@ class ProfileFragment: Fragment() {
 
     }
 
-    fun editar(){
+//    private fun savePhotoStorage(img : Bitmap){
+//        val storageRef = storage.reference
+//        val photo = "${UUID.randomUUID()}"
+//        val imagesRef = storageRef.child("images/${photo}.jpg")
+//        val baos = ByteArrayOutputStream()
+//        img.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+//        val data = baos.toByteArray()
+//
+//        var uploadTask = imagesRef.putBytes(data)
+//        uploadTask.addOnFailureListener {
+//            // Handle unsuccessful uploads
+//        }.addOnSuccessListener { taskSnapshot ->
+//            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+//            // ...
+//        }
+//
+//    }
 
+    fun editar(){
 
         if(ed_txt_email_profile.text.trim().isNotEmpty() && ed_txt_phone_profile.text.trim().isNotEmpty() && ed_txt_userName_profile.text.trim().isNotEmpty()){
 
             //if(txt_provider_admin.text.toString().equals(ProviderType.GOOGLE)){prov = ProviderType.GOOGLE}
             //if(txt_rol_admin.text.toString().equals("ROL")) {rol = "user"} //ESTO NO ESTA BIEN, PERO POR PROBAR DE MOMENTO
 
-            var prov : ProviderType = userAct.provider
-            var rol = userAct.rol
+//            var prov : ProviderType = userAct.provider
+//            var rol = userAct.rol
             var email_mod = ed_txt_email_profile.text.toString().trim()
             var userName_mod = ed_txt_userName_profile.text.toString().trim()
             var phone_mod = ed_txt_phone_profile.text.toString().trim().toInt()
 
 
-            val img : Bitmap = imgUsuarioPerfil.drawToBitmap()
-            val imgST = ImageToString(img)
-
+            photo = imgUsuarioPerfil.drawToBitmap()
+            val imgST = ImageToString(photo!!)
+//            savePhotoStorage(img)
             //Se guardarán en modo HashMap (clave, valor).
-            var user = hashMapOf(
-                "provider" to prov,
-                "userName" to userName_mod,
-                "email" to email_mod,
-                "phone" to phone_mod,
-                "rol" to rol,
-                "img" to imgST
-            )
+//            var user = hashMapOf(
+//                "userId" to userAct.userId,
+//                "userName" to userName_mod,
+//                "email" to email_mod,
+//                "phone" to phone_mod,
+//                "rol" to userAct.rol,
+//                "activo" to true,
+//                "img" to imgST,
+//                "eventos" to userAct.eventos
+//            )
 
-            var us = User(prov,userName_mod,email_mod,phone_mod,rol,imgST)
+            var user = User(userAct.userId,userName_mod,email_mod,phone_mod,userAct.rol, true, imgST,userAct.eventos)
 
 
-            db.collection("${Constantes.collectionUser2}")
-                .document(VariablesCompartidas.emailUsuarioActual.toString()) //Será la clave del documento.
+            db.collection("${Constantes.collectionUser}")
+                .document(VariablesCompartidas.userActual!!.userId.toString()) //Será la clave del documento.
                 .set(user).addOnSuccessListener {
 
                     //val us : User = user as User
-                    userAct = us
-                    VariablesCompartidas.userActual = us 
+
+                    Log.i("profile", currentUser.email.toString())
+                    VariablesCompartidas.userActual = user
+
+                    currentUser!!.updateEmail(user.email)
 
                     val navigationView: NavigationView =
                         (context as AppCompatActivity).findViewById(R.id.nav_view)
@@ -183,8 +220,8 @@ class ProfileFragment: Fragment() {
                     val emailHead = header.findViewById<TextView>(R.id.txt_userEmail_header)
 
                     imgHe.setImageBitmap(photo)
-                    nameHead.setText(userAct.userName)
-                    emailHead.setText(userAct.email)
+                    nameHead.text = user.userName
+                    emailHead.text = user.email
 
                     Toast.makeText( requireContext(), "Almacenado", Toast.LENGTH_SHORT).show()
                 }.addOnFailureListener{

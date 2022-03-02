@@ -15,6 +15,8 @@
         android:ems="10"
         android:hint="@string/userName"
         android:inputType="textPersonName"
+        android:paddingStart="4dp"
+        android:paddingLeft="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.355"
@@ -30,6 +32,8 @@
         android:inputType="textPersonName"
         android:hint="@string/email"
         style="@style/textBox_basic_style"
+        android:paddingStart="4dp"
+        android:paddingLeft="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.355"
@@ -45,6 +49,8 @@
         android:inputType="textPassword"
         android:hint="@string/password"
         style="@style/textBox_basic_style"
+        android:paddingStart="4dp"
+        android:paddingLeft="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.355"
@@ -60,6 +66,8 @@
         android:inputType="textPassword"
         android:hint="@string/repetPassword"
         style="@style/textBox_basic_style"
+        android:paddingStart="4dp"
+        android:paddingLeft="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.355"
@@ -72,7 +80,7 @@
         android:layout_width="366dp"
         android:layout_height="55dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="phone"
         android:hint="@string/phone"
         style="@style/textBox_basic_style"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -81,7 +89,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.593" />
-
 
 
     <Button
@@ -96,5 +103,17 @@
         app:layout_constraintHorizontal_bias="0.445"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.835" />
+        app:layout_constraintVertical_bias="0.932" />
+
+    <Button
+        android:id="@+id/btn_google_signUp"
+        android:layout_width="169dp"
+        android:layout_height="57dp"
+        android:text="SignUp GOOGLE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.752" />
 </androidx.constraintlayout.widget.ConstraintLayout>
