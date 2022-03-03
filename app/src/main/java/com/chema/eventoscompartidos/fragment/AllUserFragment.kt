@@ -3,6 +3,7 @@ package com.chema.eventoscompartidos.fragment
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ import com.chema.eventoscompartidos.rv.AdapterRvEventos
 import com.chema.eventoscompartidos.rv.AdapterRvUsers
 import com.chema.eventoscompartidos.utils.Constantes
 import com.chema.eventoscompartidos.utils.ProviderType
+import com.chema.eventoscompartidos.utils.VariablesCompartidas
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.QuerySnapshot
@@ -78,6 +80,7 @@ class AllUserFragment : Fragment() {
         rv = view.findViewById(R.id.rv_all_user)
         fl_btn_refresh_all_users = view.findViewById(R.id.fl_btn_refresh_all_users)
 
+
         runBlocking {
             val job : Job = launch(context = Dispatchers.Default) {
                 val datos : QuerySnapshot = getDataFromFireStore() as QuerySnapshot //Obtenermos la colección
@@ -87,8 +90,20 @@ class AllUserFragment : Fragment() {
             job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
         }
 
+
+
         fl_btn_refresh_all_users.setOnClickListener{
-            //Toast
+            runBlocking {
+                val job : Job = launch(context = Dispatchers.Default) {
+                    val datos : QuerySnapshot = getDataFromFireStore() as QuerySnapshot //Obtenermos la colección
+                    obtenerDatos(datos as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
+                }
+                //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
+                job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
+            }
+
+
+            cargarRV(view)
         }
 
         cargarRV(view)
@@ -132,16 +147,17 @@ class AllUserFragment : Fragment() {
                     user.get("eventos") as ArrayList<Evento>
                 )
                 usuarios.add(us)
+                Log.d("CHEMA2","${us.email}")
             }
         }
     }
 
     private fun cargarRV(view: View){
 
-        rv = view.findViewById(R.id.rv_usuarios)
+        rv = view.findViewById(R.id.rv_all_user)
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(view.context)
-        miAdapter = AdapterRvAllUser(view.context as AppCompatActivity, usuarios)
+        miAdapter = AdapterRvAllUser(view.context as AppCompatActivity,  usuarios)
         rv.adapter = miAdapter
 
     }

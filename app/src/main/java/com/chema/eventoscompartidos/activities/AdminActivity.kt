@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import com.chema.eventoscompartidos.AdminTabbActivity
 import com.chema.eventoscompartidos.R
 
 class AdminActivity : AppCompatActivity() {
@@ -19,7 +20,7 @@ class AdminActivity : AppCompatActivity() {
         btn_user = findViewById(R.id.btn_user)
 
         btn_admin.setOnClickListener{
-            var myIntent = Intent(this, ActivatedUserHomeActivity::class.java)
+            var myIntent = Intent(this, AdminTabbActivity::class.java)
             startActivity(myIntent)
         }
 

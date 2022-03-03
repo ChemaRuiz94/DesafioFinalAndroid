@@ -216,9 +216,10 @@ class DetalleEventoActivity : AppCompatActivity() {
                     dc.document.get("mesOpinion").toString().toInt(),
                     dc.document.get("yearOpinion").toString().toInt()
                 )
-                opiniones.add(op)
+                if(op.idEvento!!.equals(idEventoActual)){
+                    opiniones.add(op)
+                }
                 Log.d("CHEMA2_op","${op}")
-
             }
         }
     }
@@ -231,7 +232,7 @@ class DetalleEventoActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.foto_opinion -> a  =1
+            R.id.foto_opinion -> a  = 1
             R.id.location_opinion ->  a = 2
         }
         return super.onOptionsItemSelected(item)

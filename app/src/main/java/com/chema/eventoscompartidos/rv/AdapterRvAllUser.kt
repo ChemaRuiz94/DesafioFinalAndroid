@@ -35,6 +35,8 @@ class AdapterRvAllUser (
         holder.txt_email_allUser_item.text = usuario.email
         if(usuario.img != null){
             holder.img_item_allUser.setImageBitmap(Auxiliar.StringToBitMap(usuario.img))
+        }else{
+            holder.img_item_allUser.setImageResource(R.drawable.ic_no_photography)
         }
 
 

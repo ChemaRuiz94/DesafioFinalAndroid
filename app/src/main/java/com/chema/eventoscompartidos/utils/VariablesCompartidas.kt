@@ -24,6 +24,7 @@ object VariablesCompartidas {
     var emailUsuarioActual: String? = null
     var rolUsuarioActual: String? = null
 
+    var allUser: ArrayList<User> = ArrayList<User>()
     var usuariosEventoActual: ArrayList<User> = ArrayList<User>()
     var emailUsuariosEventoActual: ArrayList<String> = ArrayList<String>()
     var eventosUserActual: ArrayList<Evento> = ArrayList<Evento>()
