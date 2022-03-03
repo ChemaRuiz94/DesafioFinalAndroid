@@ -220,7 +220,6 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
         //VariablesCompartidas.emailUsuariosEventoActual.add(VariablesCompartidas.emailUsuarioActual.toString())
 
         val idEv = UUID.randomUUID().toString()
-        val fecha: Calendar = Calendar.getInstance()
         val idAsistentesHora: HashMap<UUID,Date>? = HashMap<UUID,Date>()
         var listaOpiniones: ArrayList<Opinion>? = ArrayList()
 

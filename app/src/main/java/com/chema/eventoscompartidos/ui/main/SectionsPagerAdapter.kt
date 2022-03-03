@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.chema.eventoscompartidos.R
+import com.chema.eventoscompartidos.fragment.AllEventsFragments
 import com.chema.eventoscompartidos.fragment.AllUserFragment
+import com.chema.eventoscompartidos.fragment.MyEventsFragments
 import com.chema.eventoscompartidos.fragment.ProfileFragment
 
 private val TAB_TITLES = arrayOf(
@@ -26,11 +28,9 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
         // Return a PlaceholderFragment (defined as a static inner class below).
         when(position){
             0 -> {
-                Toast.makeText(context,"pagina 1",Toast.LENGTH_SHORT).show()
-                return ProfileFragment()
+                return AllEventsFragments()
             }
             1 -> {
-                Toast.makeText(context,"pagina 2",Toast.LENGTH_SHORT).show()
                   return AllUserFragment()
             }
         }

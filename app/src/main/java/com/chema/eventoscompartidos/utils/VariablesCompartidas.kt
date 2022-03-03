@@ -1,6 +1,7 @@
 package com.chema.eventoscompartidos.utils
 
 import com.chema.eventoscompartidos.model.Evento
+import com.chema.eventoscompartidos.model.Opinion
 import com.chema.eventoscompartidos.model.User
 import com.google.android.gms.maps.model.LatLng
 import java.util.*
@@ -24,8 +25,9 @@ object VariablesCompartidas {
     var emailUsuarioActual: String? = null
     var rolUsuarioActual: String? = null
 
-    var allUser: ArrayList<User> = ArrayList<User>()
+    //var allUser: ArrayList<User> = ArrayList<User>()
+    var opinionesEventoActual: ArrayList<Opinion> = ArrayList<Opinion>()
     var usuariosEventoActual: ArrayList<User> = ArrayList<User>()
     var emailUsuariosEventoActual: ArrayList<String> = ArrayList<String>()
-    var eventosUserActual: ArrayList<Evento> = ArrayList<Evento>()
+    //var eventosUserActual: ArrayList<Evento> = ArrayList<Evento>()
 }
