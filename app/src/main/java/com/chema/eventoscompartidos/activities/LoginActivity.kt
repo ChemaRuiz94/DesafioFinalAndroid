@@ -116,7 +116,7 @@ class LoginActivity : AppCompatActivity() {
         if(user.rol.size > 1) {
             //es admin
             Toast.makeText(this, "USUARIO ADMIN", Toast.LENGTH_SHORT).show()
-            var myIntent = Intent(this, ActivatedUserHomeActivity::class.java)
+            var myIntent = Intent(this, AdminActivity::class.java)
             startActivity(myIntent)
         }
         else {

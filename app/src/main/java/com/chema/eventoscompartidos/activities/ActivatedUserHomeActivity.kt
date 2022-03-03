@@ -30,6 +30,7 @@ import com.chema.eventoscompartidos.fragment.ProfileFragment
 import com.chema.eventoscompartidos.model.Evento
 import com.chema.eventoscompartidos.model.Opinion
 import com.chema.eventoscompartidos.model.User
+import com.chema.eventoscompartidos.utils.Auxiliar
 import com.chema.eventoscompartidos.utils.Constantes
 import com.chema.eventoscompartidos.utils.VariablesCompartidas
 import com.google.android.gms.maps.model.LatLng
@@ -121,7 +122,7 @@ class ActivatedUserHomeActivity : AppCompatActivity() {
         var u : User? = VariablesCompartidas.userActual
         if(u?.img != null){
             var imgST : String? = u?.img.toString()
-            var photo: Bitmap? = StringToBitMap(imgST)
+            var photo: Bitmap? = Auxiliar.StringToBitMap(imgST)
             val navigationView: NavigationView =
                 (this as AppCompatActivity).findViewById(R.id.nav_view)
             val header: View = navigationView.getHeaderView(0)
@@ -131,15 +132,6 @@ class ActivatedUserHomeActivity : AppCompatActivity() {
 
     }
 
-    fun StringToBitMap(encodedString: String?): Bitmap? {
-        return try {
-            val encodeByte: ByteArray = Base64.decode(encodedString, Base64.DEFAULT)
-            BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.size)
-        } catch (e: Exception) {
-            e.message
-            null
-        }
-    }
 
     override fun onBackPressed(){
 
