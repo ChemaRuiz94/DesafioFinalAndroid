@@ -43,6 +43,10 @@
 
     <string name="chosePhoto">Chose phote</string>
     <string name="strMensajeElegirFoto">How do you want to add the photo?</string>
+    <string name="changeActivateUser">Change user Activated Mode?</string>
+    <string name="Activated">Activated</string>
+    <string name="Disabled">Disabled</string>
+    <string name="change">Change</string>
     <string name="strCamara">Camera</string>
     <string name="strGaleria">Gallery</string>
     <string name="addPhoto">Add Photo</string>

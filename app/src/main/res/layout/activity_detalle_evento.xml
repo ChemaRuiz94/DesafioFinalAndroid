@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.DetalleEventoActivity">
+    tools:context=".activities.DetalleEventoActivity"
+    android:background="@color/bk_color_btn">
 
     <TextView
         android:id="@+id/txt_nombreEvento_detalle"
@@ -28,7 +29,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.59" />
+        app:layout_constraintVertical_bias="0.59"
+        android:background="@color/white"/>
 
     <EditText
         android:id="@+id/ed_txt_comentario_detalle"
@@ -42,7 +44,8 @@
         app:layout_constraintHorizontal_bias="0.208"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.98" />
+        app:layout_constraintVertical_bias="0.98"
+        android:background="@drawable/rounded_edittext"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/flt_btn_sendComentario"

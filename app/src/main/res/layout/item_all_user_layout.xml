@@ -8,8 +8,8 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewUser"
-        android:layout_width="93dp"
-        android:layout_height="94dp"
+        android:layout_width="63dp"
+        android:layout_height="64dp"
         app:cardCornerRadius="75dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,29 +29,43 @@
 
     <TextView
         android:id="@+id/txt_userName_allUser_item"
-        android:layout_width="248dp"
-        android:layout_height="42dp"
+        android:layout_width="195dp"
+        android:layout_height="33dp"
         android:layout_weight="1"
         android:text="userName"
-        android:textSize="20sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.84"
+        app:layout_constraintHorizontal_bias="0.43"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.051" />
+        app:layout_constraintVertical_bias="0.238" />
 
     <TextView
         android:id="@+id/txt_email_allUser_item"
-        android:layout_width="248dp"
-        android:layout_height="42dp"
+        android:layout_width="195dp"
+        android:layout_height="33dp"
         android:text="@string/email"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.84"
+        app:layout_constraintHorizontal_bias="0.43"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.948" />
+        app:layout_constraintVertical_bias="0.865" />
+
+    <Switch
+        android:id="@+id/switchActivated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Activated"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.916"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.301" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

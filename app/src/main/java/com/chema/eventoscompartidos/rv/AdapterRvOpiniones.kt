@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chema.eventoscompartidos.R
 import com.chema.eventoscompartidos.model.Opinion
 import com.chema.eventoscompartidos.utils.Auxiliar
+import com.chema.eventoscompartidos.utils.VariablesCompartidas
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -42,7 +43,9 @@ class AdapterRvOpiniones (
         val dia = opinion.diaOpinion
         val mon = opinion.yearOpinion
         val fechaST = "${dia}/${mon} ${hora}:${min}"
+
         holder.txt_hora_comentario.text = (fechaST)
+        holder.txt_nombreUser_detalle.text = (VariablesCompartidas.userActual!!.userName)
 
         if(opinion.comentario != null){
             holder.ed_txt_multiline_opinion.setText(opinion.comentario)
@@ -87,6 +90,7 @@ class AdapterRvOpiniones (
         //val img_opinion = view.findViewById<ImageView>(R.id.img_opinion)
         //val frm_map_opinion = view.findViewById<FrameLayout>(R.id.frm_map_opinion)
         val txt_hora_comentario = view.findViewById<TextView>(R.id.txt_hora_comentario)
+        val txt_nombreUser_detalle = view.findViewById<TextView>(R.id.txt_nombreUser_detalle)
 
     }
 }

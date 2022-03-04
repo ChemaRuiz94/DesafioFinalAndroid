@@ -88,6 +88,7 @@ class AdapterRvEventos(
 
     }
 
+    //++++++++++++++++METODOS++++++++++
     private fun checkEliminar(evento: Evento){
 
         AlertDialog.Builder(context).setTitle("¿Desea eliminar este evento?")
@@ -178,39 +179,6 @@ class AdapterRvEventos(
         for (opin in VariablesCompartidas.opinionesEventoActual){
             db.collection("${Constantes.collectionOpiniones}").document("${opin.idOpinion}").delete()
         }
-    }
-
-    private fun eliminarOpiniones(evento: Evento){
-
-        val db = FirebaseFirestore.getInstance()
-        val listaOpi : ArrayList<Opinion>? = evento.listaOpiniones
-        val listIdOpi : ArrayList<String> = ArrayList()
-
-        for (opi in listaOpi!!){
-            listIdOpi.add(opi.idOpinion.toString())
-            Log.d("CHEMA2","ID OPINION: ${opi.idOpinion.toString()}")
-        }
-        for(idOp in listIdOpi){
-            try {
-                db.collection("${Constantes.collectionOpiniones}").document("${idOp.toString()}").delete()
-                    .addOnFailureListener{
-                        Log.d("CHEMA2","FAILURE:")
-                    }
-            }catch (e : Exception){
-                Log.d("CHEMA2","EXCEPTION: ${e}")
-            }
-
-        }
-        /*
-        if (listaOpi != null) {
-            for(opi in listaOpi){
-                val db = FirebaseFirestore.getInstance()
-                Log.d("CHEMA2","ID OPINION: ${opi.idOpinion}")
-                db.collection("${Constantes.collectionOpiniones}").document("${opi.idOpinion}").delete()
-            }
-        }
-
-         */
     }
 
 
