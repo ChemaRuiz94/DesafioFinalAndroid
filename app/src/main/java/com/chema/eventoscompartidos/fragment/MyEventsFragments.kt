@@ -44,9 +44,6 @@ class MyEventsFragments : Fragment() {
     var misEventos : ArrayList<Evento> = ArrayList<Evento>()
     private lateinit var miAdapter: AdapterRvEventos
 
-    private lateinit var fl_btn_new_event : FloatingActionButton
-    private lateinit var fl_btn_refresh : FloatingActionButton
-
     private lateinit var homeViewModel: MyEventsViewModel
     private var _binding: FragmentEventsBinding? = null
 
@@ -83,35 +80,7 @@ class MyEventsFragments : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         rv = view.findViewById(R.id.rv_events)
-        fl_btn_new_event = view.findViewById(R.id.fl_btn_new_event)
-        fl_btn_refresh = view.findViewById(R.id.fl_btn_refresh)
 
-
-        /*
-        //BORRAR
-        listrol.add(rol)
-        var user: User = User(idUse.toString(),"Prueba","email",0,listrol,true,null,listEv)
-        listUs.add(user)
-        listOpi.add(opinion)
-        var evento1 = Evento(
-            idEv.toString(),
-            "Ejemplo1",
-            fecha.get(Calendar.HOUR),
-            fecha.get(Calendar.MINUTE),
-            fecha.get(Calendar.DAY_OF_MONTH),
-            fecha.get(Calendar.MONTH),
-            fecha.get(Calendar.YEAR),
-            ubi,
-            lat,
-            lon,
-            listUs,
-            null,
-            listOpi
-        )
-        eventos.add(evento1)
-        cargarRV(view)
-        //BORRAR
-         */
 
         runBlocking {
             val job : Job = launch(context = Dispatchers.Default) {
@@ -120,23 +89,6 @@ class MyEventsFragments : Fragment() {
             }
             //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
             job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
-        }
-
-        fl_btn_new_event.setOnClickListener{
-            var intetnNewEvent = Intent(requireContext(),NewEventoActivity::class.java)
-            startActivity(intetnNewEvent)
-        }
-
-        fl_btn_refresh.setOnClickListener{
-            runBlocking {
-                val job : Job = launch(context = Dispatchers.Default) {
-                    val datos : QuerySnapshot = getDataFromFireStore() as QuerySnapshot //Obtenermos la colección
-                    obtenerDatos(datos as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
-                }
-                //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
-                job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
-            }
-            cargarRV(view)
         }
 
         cargarRV(view)

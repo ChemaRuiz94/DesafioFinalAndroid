@@ -34,7 +34,7 @@ import kotlin.collections.ArrayList
 class AdapterRvEventos(
     private val context: AppCompatActivity,
     private val eventos: ArrayList<Evento>,
-    private val admin: Boolean
+    private val allEvents: Boolean
 ) : RecyclerView.Adapter<AdapterRvEventos.ViewHolderEvento>() {
 
 
@@ -65,17 +65,23 @@ class AdapterRvEventos(
         holder.hora_evento.text = "${fechaHora}:${fechaMin}"
 
 
-        if(admin){
+        if(VariablesCompartidas.adminMode && allEvents){
+
             holder.itemView.setOnClickListener{
                 //EDITAR
                 Toast.makeText(context, "EDITAR EVENTO / DETALLE", Toast.LENGTH_SHORT).show()
-
             }
+
             holder.itemView.setOnLongClickListener(View.OnLongClickListener {
                 checkEliminar(evento)
                 false
             })
-        }else{
+        }else if(!VariablesCompartidas.adminMode && allEvents){
+            holder.itemView.setOnClickListener{
+                //EDITAR
+                Toast.makeText(context, "APUNTARSE EVENTO", Toast.LENGTH_SHORT).show()
+            }
+        }else if (!allEvents){
             holder.itemView.setOnClickListener{
                 val homeIntent = Intent(context, DetalleEventoActivity::class.java).apply {
                     VariablesCompartidas.eventoActual = evento
@@ -118,6 +124,11 @@ class AdapterRvEventos(
         }
     }
 
+    private fun addUserToEvnt(evento: Evento){
+        
+    }
+
+    //+++++++++++++++++++++++++++++++
     suspend fun getDataFromFireStore(evento: Evento)  : QuerySnapshot? {
 
         val db = FirebaseFirestore.getInstance()

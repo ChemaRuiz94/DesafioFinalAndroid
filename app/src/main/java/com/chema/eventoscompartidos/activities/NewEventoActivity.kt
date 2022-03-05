@@ -56,9 +56,8 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
     private var localizacionSeleccionada: String? = null
     private var ubicacionActual : LatLng? = LatLng(-33.852, 151.211) //UBI EN SIDNEY
     private lateinit var mMap: GoogleMap
+    private var ubicacionCambiada = false
     //*****************************************
-
-    private var eventoActual : Evento? = null
 
     private lateinit var rv : RecyclerView
     var usuarios : ArrayList<User> = ArrayList<User>()
@@ -82,7 +81,7 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
         //var a = findViewById(R.id.fragment_new_event_maps)
 
 
-        eventoActual = VariablesCompartidas.eventoActual
+        //eventoActual = VariablesCompartidas.eventoActual
 
         //limpiamos los usuarios
         VariablesCompartidas.usuariosEventoActual.clear()
@@ -128,8 +127,28 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
 
     override fun onResume() {
         super.onResume()
+        //cargarMapa()
         cambiar_UbicacionActual()
     }
+
+    override fun onRestart() {
+        super.onRestart()
+        usuarios.clear()
+        VariablesCompartidas.usuariosEventoActual.clear()
+        runBlocking {
+            val job : Job = launch(context = Dispatchers.Default) {
+                val datos : QuerySnapshot = getDataFromFireStore() as QuerySnapshot //Obtenermos la colección
+                obtenerDatos(datos as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
+            }
+            //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
+            job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
+        }
+        //cargarMapa()
+        cargarRV()
+
+    }
+
+
     //*****************************************
 
     private fun cargarMapa() {
@@ -257,8 +276,10 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
             ubicacionActual = LatLng(VariablesCompartidas.latEventoActual.toString().toDouble(),VariablesCompartidas.lonEventoActual.toString().toDouble())
             ed_txt_ubicacion.setText("${ubicacionActual}")
 
+            ubicacionCambiada = true
+
             val ubi = LatLng(VariablesCompartidas.latEventoActual.toString().toDouble(), VariablesCompartidas.lonEventoActual.toString().toDouble())
-            mMap?.addMarker(MarkerOptions().position(ubi).title("kk"))
+            mMap?.addMarker(MarkerOptions().position(ubi).title("${ed_txt_titulo_evento.text}"))
             mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubi,15f))
         }
     }
@@ -266,9 +287,8 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
     override fun onMapReady(p0: GoogleMap?) {
         mMap = p0!!
         mMap.mapType=GoogleMap.MAP_TYPE_NORMAL
-        //val Kuta = LatLng(12.0, 28.0)
         val Kuta = LatLng(-33.852, 151.211)
-        mMap?.addMarker(MarkerOptions().position(Kuta).title("kk"))
+        mMap?.addMarker(MarkerOptions().position(Kuta).title("${ed_txt_titulo_evento.text}"))
         mMap?.moveCamera(CameraUpdateFactory.newLatLng(Kuta))
 
     }

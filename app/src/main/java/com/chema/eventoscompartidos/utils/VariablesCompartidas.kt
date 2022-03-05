@@ -24,6 +24,7 @@ object VariablesCompartidas {
 
     var emailUsuarioActual: String? = null
     var rolUsuarioActual: String? = null
+    var adminMode : Boolean = false
 
     //var allUser: ArrayList<User> = ArrayList<User>()
     var opinionesEventoActual: ArrayList<Opinion> = ArrayList<Opinion>()

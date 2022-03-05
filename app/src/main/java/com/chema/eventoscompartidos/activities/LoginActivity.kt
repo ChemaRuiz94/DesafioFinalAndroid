@@ -115,18 +115,20 @@ class LoginActivity : AppCompatActivity() {
 //        val roles = findAllRoles()
         if(user.rol.size > 1) {
             //es admin
-            Toast.makeText(this, "USUARIO ADMIN", Toast.LENGTH_SHORT).show()
+            VariablesCompartidas.adminMode = true
             var myIntent = Intent(this, AdminActivity::class.java)
             startActivity(myIntent)
         }
         else {
             //vamos usuario activity
+            VariablesCompartidas.adminMode = false
             var myIntent = Intent(this, ActivatedUserHomeActivity::class.java)
             startActivity(myIntent)
         }
 
     }
 
+    /*
     private fun findAllRoles(): ArrayList<Rol>{
         var rolesBd : ArrayList<Rol> = ArrayList()
         db.collection("${Constantes.COLLECTION_ROL}")
@@ -149,6 +151,8 @@ class LoginActivity : AppCompatActivity() {
         return rolesBd
     }
 
+
+     */
     private fun findUserByEmail(email: String){
 
         Toast.makeText(this, email, Toast.LENGTH_SHORT).show()
@@ -179,6 +183,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                     else {
                         //usuario no activo mostrar mensaje
+                        VariablesCompartidas.adminMode = false
                         var myIntent = Intent(this, HomeActivity::class.java)
                         startActivity(myIntent)
                     }
@@ -189,70 +194,6 @@ class LoginActivity : AppCompatActivity() {
                 Log.w(TAG, "Error getting documents: ", exception)
             }
     }
-
-    suspend fun getDataFromFireStore2()  : QuerySnapshot? {
-        return try{
-            val data = db.collection("${Constantes.collectionUser}")
-                .get()
-                .await()
-            data
-        }catch (e : Exception){
-            null
-        }
-    }
-
-    private fun obtenerDatos2(datos: QuerySnapshot?) {
-        usuarios.clear()
-
-        for(dc: DocumentChange in datos?.documentChanges!!){
-
-            if (dc.type == DocumentChange.Type.ADDED){
-
-                //var prov = dc.document.get("provider").toString()
-                var al = User(
-                    dc.document.get("userId").toString(),
-                    dc.document.get("userName").toString(),
-                    dc.document.get("email").toString(),
-                    dc.document.get("phone").toString().toInt(),
-                    dc.document.get("rol") as ArrayList<Rol>,
-                    dc.document.get("activo") as Boolean,
-                    dc.document.get("img").toString(),
-                    dc.document.get("eventos") as ArrayList<Evento>
-                )
-                Log.e("CHE","${al.rol}")
-                usuarios.add(al)
-            }
-        }
-    }
-
-
-    fun check_user_rol(){
-        for (u in usuarios){
-            if(u.email.equals(VariablesCompartidas.emailUsuarioActual)){
-//                VariablesCompartidas.rolUsuarioActual = u.rol
-                VariablesCompartidas.userActual = u
-            }
-        }
-
-        if(VariablesCompartidas.rolUsuarioActual.equals("user")){
-
-            //Toast.makeText(this, "USUARIO MINDUNDI", Toast.LENGTH_SHORT).show()
-            var myIntent = Intent(this,HomeActivity::class.java)
-            startActivity(myIntent)
-
-        }else if(VariablesCompartidas.rolUsuarioActual.equals("activated_user")){
-
-            //Toast.makeText(this, "USUARIO ACTIVADO", Toast.LENGTH_SHORT).show()
-            var myIntent = Intent(this,ActivatedUserHomeActivity::class.java)
-            startActivity(myIntent)
-
-        }else if (VariablesCompartidas.rolUsuarioActual.equals("admin")){
-            Toast.makeText(this, "USUARIO ADMIN", Toast.LENGTH_SHORT).show()
-        }else{
-            Toast.makeText(this, "NINGUN TIPO DE ROL", Toast.LENGTH_SHORT).show()
-        }
-    }
-
 
 
 
@@ -280,7 +221,6 @@ class LoginActivity : AppCompatActivity() {
 //        googleClient.signOut() //Con esto salimos de la posible cuenta  de Google que se encuentre logueada.
         val signInIntent = googleClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
-
 
     }
 
