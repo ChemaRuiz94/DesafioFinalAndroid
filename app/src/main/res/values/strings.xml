@@ -17,6 +17,8 @@
     <string name="ERROR">ERROR</string>
     <string name="aceptar">Aceptar</string>
     <string name="cancelar">Cancelar</string>
+    <string name="delete">Delete</string>
+    <string name="deleteThisEvent">Delete this Event?</string>
     <string name="ocurridoErrorAutenticacion">Se ha producido un error autenticando al usuairo</string>
     <string name="SignUpSuscesfull">SignUp Suscesfull</string>
     <string name="Suscesfull">Suscesfull</string>
@@ -34,6 +36,8 @@
 
     <string name="asistentesEvento">Attendees to the event</string>
     <string name="nuevoEvento">New event</string>
+    <string name="asistToTheEvent">Sign up for the event?</string>
+    <string name="disapointEvent">Cancel attendance?</string>
     <string name="nameEvento">Event Name...</string>
     <string name="Date">Date</string>
     <string name="Hour">Hour</string>

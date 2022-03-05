@@ -43,6 +43,7 @@ class MyEventsFragments : Fragment() {
     var eventos : ArrayList<Evento> = ArrayList<Evento>()
     var misEventos : ArrayList<Evento> = ArrayList<Evento>()
     private lateinit var miAdapter: AdapterRvEventos
+    private lateinit var fl_btn_refresh_my_events: FloatingActionButton
 
     private lateinit var homeViewModel: MyEventsViewModel
     private var _binding: FragmentEventsBinding? = null
@@ -80,7 +81,7 @@ class MyEventsFragments : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         rv = view.findViewById(R.id.rv_events)
-
+        fl_btn_refresh_my_events = view.findViewById(R.id.fl_btn_refresh_my_events)
 
         runBlocking {
             val job : Job = launch(context = Dispatchers.Default) {
@@ -89,6 +90,18 @@ class MyEventsFragments : Fragment() {
             }
             //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
             job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
+        }
+
+        fl_btn_refresh_my_events.setOnClickListener{
+            runBlocking {
+                val job : Job = launch(context = Dispatchers.Default) {
+                    val datos : QuerySnapshot = getDataFromFireStore() as QuerySnapshot //Obtenermos la colección
+                    obtenerDatos(datos as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
+                }
+                //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
+                job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
+            }
+            cargarRV(view)
         }
 
         cargarRV(view)
