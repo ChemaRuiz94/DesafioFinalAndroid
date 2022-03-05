@@ -21,6 +21,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EventosCompartidos">
         <activity
+            android:name=".activities.EditEventActivity"
+            android:exported="true" />
+        <activity
+            android:name=".AdminTabbActivity"
+            android:exported="true"
+            android:label="@string/title_activity_admin_tabb"
+            android:theme="@style/Theme.EventosCompartidos.NoActionBar" />
+        <activity
+            android:name=".activities.AdminActivity"
+            android:exported="true" />
+        <activity
             android:name=".activities.DetalleEventoActivity"
             android:exported="true" />
         <!--

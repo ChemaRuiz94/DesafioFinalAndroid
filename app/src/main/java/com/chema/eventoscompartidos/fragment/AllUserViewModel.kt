@@ -1,13 +1,13 @@
-package com.chema.eventoscompartidos.activities.ui.slideshow
+package com.chema.eventoscompartidos.fragment
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class SlideshowViewModel : ViewModel() {
+class AllUserViewModel : ViewModel()  {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is slideshow Fragment"
+        value = "This is All User Fragment"
     }
     val text: LiveData<String> = _text
 }

@@ -17,6 +17,9 @@
     <string name="ERROR">ERROR</string>
     <string name="aceptar">Aceptar</string>
     <string name="cancelar">Cancelar</string>
+    <string name="delete">Delete</string>
+    <string name="deleteThisEvent">Delete this Event?</string>
+    <string name="deleteThisOpinion">Delete this Coment?</string>
     <string name="ocurridoErrorAutenticacion">Se ha producido un error autenticando al usuairo</string>
     <string name="SignUpSuscesfull">SignUp Suscesfull</string>
     <string name="Suscesfull">Suscesfull</string>
@@ -34,6 +37,11 @@
 
     <string name="asistentesEvento">Attendees to the event</string>
     <string name="nuevoEvento">New event</string>
+    <string name="asistToTheEvent">Sign up for the event?</string>
+    <string name="editEvent">Edit event?</string>
+    <string name="editEventAsistant">Edit event attend?</string>
+    <string name="disapointEvent">Cancel attendance?</string>
+    <string name="edit">Edit?</string>
     <string name="nameEvento">Event Name...</string>
     <string name="Date">Date</string>
     <string name="Hour">Hour</string>
@@ -43,6 +51,10 @@
 
     <string name="chosePhoto">Chose phote</string>
     <string name="strMensajeElegirFoto">How do you want to add the photo?</string>
+    <string name="changeActivateUser">Change user Activated Mode?</string>
+    <string name="Activated">Activated</string>
+    <string name="Disabled">Disabled</string>
+    <string name="change">Change</string>
     <string name="strCamara">Camera</string>
     <string name="strGaleria">Gallery</string>
     <string name="addPhoto">Add Photo</string>
@@ -53,10 +65,22 @@
     <string name="normal_mode">Normal Mode</string>
     <string name="hybrid_mode">Hybrid Mode</string>
 
+    <string name="admin_mode">Admin Mode</string>
+    <string name="user_mode">User Mode</string>
+
     <string name="menu_home">Home</string>
     <string name="menu_profile">Profile</string>
     <string name="my_events">My Events</string>
+    <string name="all_events">All Events</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_admin_tabbed">AdminTabbedActivity</string>
+    <string name="tab_users">Users</string>
+    <string name="tab_events">Events</string>
+    <string name="title_activity_admin_nav_draw">AdminNavDrawActivity</string>
+    <string name="title_activity_admin_nav_home">AdminNavHomeActivity</string>
+    <string name="title_activity_admin_tabb">AdminTabbActivity</string>
 </resources>

@@ -115,38 +115,17 @@ class LoginActivity : AppCompatActivity() {
 //        val roles = findAllRoles()
         if(user.rol.size > 1) {
             //es admin
-            Toast.makeText(this, "USUARIO ADMIN", Toast.LENGTH_SHORT).show()
-            var myIntent = Intent(this, ActivatedUserHomeActivity::class.java)
+            VariablesCompartidas.adminMode = true
+            var myIntent = Intent(this, AdminActivity::class.java)
             startActivity(myIntent)
         }
         else {
             //vamos usuario activity
+            VariablesCompartidas.adminMode = false
             var myIntent = Intent(this, ActivatedUserHomeActivity::class.java)
             startActivity(myIntent)
         }
 
-    }
-
-    private fun findAllRoles(): ArrayList<Rol>{
-        var rolesBd : ArrayList<Rol> = ArrayList()
-        db.collection("${Constantes.COLLECTION_ROL}")
-            .get()
-            .addOnSuccessListener { roles ->
-                //Existe
-                for (rol in roles) {
-                    Log.d(TAG, "${rol.id} => ${rol.data}")
-                    var rolBD = Rol(
-                        rol.get("idRol").toString().toInt(),
-                        rol.get("nombreRol").toString()
-                    )
-                    rolesBd.add(rolBD)
-                }
-            }
-            .addOnFailureListener { exception ->
-                //No existe
-                Log.w(TAG, "Error getting documents: ", exception)
-            }
-        return rolesBd
     }
 
     private fun findUserByEmail(email: String){
@@ -179,6 +158,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                     else {
                         //usuario no activo mostrar mensaje
+                        VariablesCompartidas.adminMode = false
                         var myIntent = Intent(this, HomeActivity::class.java)
                         startActivity(myIntent)
                     }
@@ -189,70 +169,6 @@ class LoginActivity : AppCompatActivity() {
                 Log.w(TAG, "Error getting documents: ", exception)
             }
     }
-
-    suspend fun getDataFromFireStore2()  : QuerySnapshot? {
-        return try{
-            val data = db.collection("${Constantes.collectionUser}")
-                .get()
-                .await()
-            data
-        }catch (e : Exception){
-            null
-        }
-    }
-
-    private fun obtenerDatos2(datos: QuerySnapshot?) {
-        usuarios.clear()
-
-        for(dc: DocumentChange in datos?.documentChanges!!){
-
-            if (dc.type == DocumentChange.Type.ADDED){
-
-                //var prov = dc.document.get("provider").toString()
-                var al = User(
-                    dc.document.get("userId").toString(),
-                    dc.document.get("userName").toString(),
-                    dc.document.get("email").toString(),
-                    dc.document.get("phone").toString().toInt(),
-                    dc.document.get("rol") as ArrayList<Rol>,
-                    dc.document.get("activo") as Boolean,
-                    dc.document.get("img").toString(),
-                    dc.document.get("eventos") as ArrayList<Evento>
-                )
-                Log.e("CHE","${al.rol}")
-                usuarios.add(al)
-            }
-        }
-    }
-
-
-    fun check_user_rol(){
-        for (u in usuarios){
-            if(u.email.equals(VariablesCompartidas.emailUsuarioActual)){
-//                VariablesCompartidas.rolUsuarioActual = u.rol
-                VariablesCompartidas.userActual = u
-            }
-        }
-
-        if(VariablesCompartidas.rolUsuarioActual.equals("user")){
-
-            //Toast.makeText(this, "USUARIO MINDUNDI", Toast.LENGTH_SHORT).show()
-            var myIntent = Intent(this,HomeActivity::class.java)
-            startActivity(myIntent)
-
-        }else if(VariablesCompartidas.rolUsuarioActual.equals("activated_user")){
-
-            //Toast.makeText(this, "USUARIO ACTIVADO", Toast.LENGTH_SHORT).show()
-            var myIntent = Intent(this,ActivatedUserHomeActivity::class.java)
-            startActivity(myIntent)
-
-        }else if (VariablesCompartidas.rolUsuarioActual.equals("admin")){
-            Toast.makeText(this, "USUARIO ADMIN", Toast.LENGTH_SHORT).show()
-        }else{
-            Toast.makeText(this, "NINGUN TIPO DE ROL", Toast.LENGTH_SHORT).show()
-        }
-    }
-
 
 
 
@@ -281,7 +197,6 @@ class LoginActivity : AppCompatActivity() {
         val signInIntent = googleClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
 
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -300,13 +215,10 @@ class LoginActivity : AppCompatActivity() {
                     auth.signInWithCredential(credential).addOnCompleteListener {
                         if (it.isSuccessful){
 
-                            Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
                             val user = auth.currentUser!!
                             VariablesCompartidas.emailUsuarioActual = user.email!!
 
                             findUserByEmail(user.email!!)
-                            //irHome(account.email?:"")  //Esto de los interrogantes es por si está vacío el email.
-                            //Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
                         } else {
                             showAlert()
                         }

@@ -30,6 +30,7 @@ import com.chema.eventoscompartidos.fragment.ProfileFragment
 import com.chema.eventoscompartidos.model.Evento
 import com.chema.eventoscompartidos.model.Opinion
 import com.chema.eventoscompartidos.model.User
+import com.chema.eventoscompartidos.utils.Auxiliar
 import com.chema.eventoscompartidos.utils.Constantes
 import com.chema.eventoscompartidos.utils.VariablesCompartidas
 import com.google.android.gms.maps.model.LatLng
@@ -67,13 +68,7 @@ class ActivatedUserHomeActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarActivatedUserHome.toolbar)
 
-        /*
-        binding.appBarActivatedUserHome.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
 
-         */
 
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
@@ -83,7 +78,7 @@ class ActivatedUserHomeActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_profile, R.id.nav_events, R.id.nav_slideshow
+                R.id.nav_profile, R.id.nav_events, R.id.nav_all_events
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -121,7 +116,7 @@ class ActivatedUserHomeActivity : AppCompatActivity() {
         var u : User? = VariablesCompartidas.userActual
         if(u?.img != null){
             var imgST : String? = u?.img.toString()
-            var photo: Bitmap? = StringToBitMap(imgST)
+            var photo: Bitmap? = Auxiliar.StringToBitMap(imgST)
             val navigationView: NavigationView =
                 (this as AppCompatActivity).findViewById(R.id.nav_view)
             val header: View = navigationView.getHeaderView(0)
@@ -131,34 +126,30 @@ class ActivatedUserHomeActivity : AppCompatActivity() {
 
     }
 
-    fun StringToBitMap(encodedString: String?): Bitmap? {
-        return try {
-            val encodeByte: ByteArray = Base64.decode(encodedString, Base64.DEFAULT)
-            BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.size)
-        } catch (e: Exception) {
-            e.message
-            null
-        }
-    }
-
     override fun onBackPressed(){
 
-        AlertDialog.Builder(this)
-            .setTitle("Cerrar sersion")
-            .setMessage("Desea cerrar sesion")
-            .setPositiveButton("OK") { view, _ ->
-                super.onBackPressed()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-                view.dismiss()
-            }
-            .setNegativeButton("NO") { view, _ ->
-                view.dismiss()
-            }
-            .setCancelable(false)
-            .create()
-            .show()
+        if(VariablesCompartidas.adminLikeUserMode){
+            VariablesCompartidas.adminLikeUserMode = false
+            finish()
+        }else{
+            AlertDialog.Builder(this)
+                .setTitle("Cerrar sersion")
+                .setMessage("Desea cerrar sesion")
+                .setPositiveButton("OK") { view, _ ->
+                    super.onBackPressed()
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                    VariablesCompartidas.adminMode = false
+                    finish()
+                    view.dismiss()
+                }
+                .setNegativeButton("NO") { view, _ ->
+                    view.dismiss()
+                }
+                .setCancelable(false)
+                .create()
+                .show()
+        }
     }
 
     //********************

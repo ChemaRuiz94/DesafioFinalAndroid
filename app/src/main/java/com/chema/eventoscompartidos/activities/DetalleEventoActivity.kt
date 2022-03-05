@@ -42,6 +42,8 @@ class DetalleEventoActivity : AppCompatActivity() {
 
     private var idEventoActual : String? = null
     private lateinit var opiniones : ArrayList<Opinion>
+    private var opinionesOrdenadas : ArrayList<Opinion> = ArrayList()
+    //private var opinionesFechas = mutableListOf<Date>()
 
     private lateinit var rv : RecyclerView
     private lateinit var miAdapter: AdapterRvOpiniones
@@ -79,6 +81,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         opiniones.add(opinion)
 
          */
+
         ed_txt_comentario_detalle = findViewById(R.id.ed_txt_comentario_detalle)
         flt_btn_sendComentario = findViewById(R.id.flt_btn_sendComentario)
         txt_nombreEvento_detalle = findViewById(R.id.txt_nombreEvento_detalle)
@@ -95,14 +98,34 @@ class DetalleEventoActivity : AppCompatActivity() {
                 refreshRV()
             }
         }
+        opinionesOrdenadas.clear()
+        opinionesOrdenadas =  ordenarOpiniones()
         cargarRV()
     }
 
+    private fun ordenarOpiniones() : ArrayList<Opinion>{
+        val opiniOrdenadas = opiniones.sortedWith(compareBy({ it.yearOpinion }, { it.mesOpinion },{it.diaOpinion}, { it.horaOpinion },{it.minOpinion}))
+
+        /*
+        for(opi in opiniones){
+            val fecha = Date(opi.yearOpinion,opi.mesOpinion,opi.diaOpinion)
+            opinionesFechas.add(fecha)
+            opinionesFechas.sortWith(compareBy<Date> { it.year }.thenBy { it.month }.thenBy { it.day })
+        }
+
+         */
+
+        for (opi in opiniOrdenadas){
+            opinionesOrdenadas.add(opi)
+        }
+        return opinionesOrdenadas
+    }
 
 
     //++++++++++++CREAR OPINION DE TEXTO++++++++++++++++++
     fun crearComentario():Opinion{
         val idOpin : String = UUID.randomUUID().toString()
+        val userNameAutor : String = VariablesCompartidas.userActual!!.userName
         val st = ed_txt_comentario_detalle.text.toString()
         val fecha = Calendar.getInstance()
         val hora = fecha.get(Calendar.HOUR)
@@ -110,7 +133,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         val dia = fecha.get(Calendar.DAY_OF_MONTH)
         val mes = fecha.get(Calendar.MONTH)
         val year = fecha.get(Calendar.YEAR)
-        return Opinion(idOpin,idEventoActual,st,null,null,null,hora,min,dia,mes,year)
+        return Opinion(idOpin,idEventoActual,userNameAutor,st,null,null,null,hora,min,dia,mes,year)
     }
 
     fun saveComentarioFirebase(opinion: Opinion){
@@ -146,7 +169,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         rv = findViewById(R.id.rv_opiniones_detalle)
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
-        miAdapter = AdapterRvOpiniones(this, opiniones)
+        miAdapter = AdapterRvOpiniones(this, opinionesOrdenadas)
         rv.adapter = miAdapter
     }
 
@@ -160,6 +183,8 @@ class DetalleEventoActivity : AppCompatActivity() {
             //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
             job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
         }
+        opinionesOrdenadas.clear()
+        opinionesOrdenadas =  ordenarOpiniones()
         cargarRV()
     }
 
@@ -206,6 +231,7 @@ class DetalleEventoActivity : AppCompatActivity() {
                 var op = Opinion(
                     dc.document.get("idOpinion").toString(),
                     dc.document.get("idEvento").toString(),
+                    dc.document.get("userNameAutor").toString(),
                     coment,
                     foto,
                     longLugarInteres,
@@ -216,9 +242,10 @@ class DetalleEventoActivity : AppCompatActivity() {
                     dc.document.get("mesOpinion").toString().toInt(),
                     dc.document.get("yearOpinion").toString().toInt()
                 )
-                opiniones.add(op)
+                if(op.idEvento!!.equals(idEventoActual)){
+                    opiniones.add(op)
+                }
                 Log.d("CHEMA2_op","${op}")
-
             }
         }
     }
@@ -231,7 +258,7 @@ class DetalleEventoActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.foto_opinion -> a  =1
+            R.id.foto_opinion -> a  = 1
             R.id.location_opinion ->  a = 2
         }
         return super.onOptionsItemSelected(item)

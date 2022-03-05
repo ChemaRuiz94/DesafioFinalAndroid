@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bk_fondo_1_claro"
-    android:id="@+id/fragment_events">
+    android:id="@+id/fragment_al_events">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_events"
+        android:id="@+id/rv_events_all_events"
         android:layout_width="364dp"
         android:layout_height="644dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,9 +20,21 @@
         app:layout_constraintVertical_bias="0.183"
         android:background="@color/white"/>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fl_btn_new_event_all_events"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.895"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.992"
+        app:srcCompat="@drawable/ic_ne_event" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fl_btn_refresh_my_events"
+        android:id="@+id/fl_btn_refresh_all_events"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -33,6 +45,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.992"
         app:srcCompat="@drawable/ic_refresh" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

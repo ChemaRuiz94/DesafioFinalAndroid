@@ -185,18 +185,7 @@ class ProfileFragment: Fragment() {
 
             photo = imgUsuarioPerfil.drawToBitmap()
             val imgST = ImageToString(photo!!)
-//            savePhotoStorage(img)
-            //Se guardarán en modo HashMap (clave, valor).
-//            var user = hashMapOf(
-//                "userId" to userAct.userId,
-//                "userName" to userName_mod,
-//                "email" to email_mod,
-//                "phone" to phone_mod,
-//                "rol" to userAct.rol,
-//                "activo" to true,
-//                "img" to imgST,
-//                "eventos" to userAct.eventos
-//            )
+
 
             var user = User(userAct.userId,userName_mod,email_mod,phone_mod,userAct.rol, true, imgST,userAct.eventos)
 
