@@ -14,8 +14,14 @@ import com.chema.eventoscompartidos.model.Rol
 import com.chema.eventoscompartidos.model.User
 import com.chema.eventoscompartidos.rv.AdapterRvUsers
 import com.chema.eventoscompartidos.utils.Constantes
+import com.chema.eventoscompartidos.utils.DatePickerFragment
+import com.chema.eventoscompartidos.utils.TimePickerFragment
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.QuerySnapshot
@@ -30,7 +36,7 @@ import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
-class EditEventActivity : AppCompatActivity() {
+class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val db = Firebase.firestore
 
@@ -101,12 +107,23 @@ class EditEventActivity : AppCompatActivity() {
             job2.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
         }
 
+        btn_fecha_edit.setOnClickListener{
+            val newFragment = DatePickerFragment(ed_txt_fecha_edit)
+            newFragment.show(supportFragmentManager, "datePicker")
+        }
+        btn_hora_edit.setOnClickListener{
+            val newFragment = TimePickerFragment(ed_txt_hora_edit)
+            newFragment.show(supportFragmentManager, "timePicker")
+        }
+
         cargarUserAsist()
         cargarDatosEvento()
         cargarRV()
+        cargarMapa()
 
     }
 
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++
     private fun cargarDatosEvento() {
         horaEvento = evento!!.horaEvento
         minEvento = evento!!.minEvento
@@ -122,6 +139,9 @@ class EditEventActivity : AppCompatActivity() {
         ed_txt_ubicacion_edit.setText("${ubicacionActual.toString()}")
     }
 
+
+
+    //+++++++++++++++ASISTENTES+++++++++++++++++++
     private fun cargarUserAsist() {
         for(us in usuarios){
             if(evento!!.emailAsistentes!!.contains(us.email)){
@@ -136,6 +156,22 @@ class EditEventActivity : AppCompatActivity() {
         rv.layoutManager = LinearLayoutManager(this)
         miAdapter = AdapterRvUsers(this, usuariosAsis,true)
         rv.adapter = miAdapter
+    }
+
+    //++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    private fun cargarMapa() {
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.frm_MapLocation_edit) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+    }
+
+    override fun onMapReady(p0: GoogleMap?) {
+        mMap = p0!!
+        mMap.mapType=GoogleMap.MAP_TYPE_NORMAL
+        mMap?.addMarker(MarkerOptions().position(ubicacionActual!!).title("${ed_txt_titulo_evento_edit.text}"))
+        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubicacionActual,11f))
+
     }
 
     //++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -119,7 +119,7 @@ class AdapterRvEventos(
         runBlocking {
             val job : Job = launch(context = Dispatchers.Default) {
                 val datos : QuerySnapshot = getDataFromFireStore(evento) as QuerySnapshot //Obtenermos la colección
-                obtenerDatos(datos as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
+                delDatos(datos as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
             }
             //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
             job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
@@ -202,7 +202,7 @@ class AdapterRvEventos(
         }
     }
 
-    private fun obtenerDatos(datos: QuerySnapshot?) {
+    private fun delDatos(datos: QuerySnapshot?) {
         VariablesCompartidas.opinionesEventoActual.clear()
         val db = FirebaseFirestore.getInstance()
         for(dc: DocumentChange in datos?.documentChanges!!){
@@ -232,6 +232,7 @@ class AdapterRvEventos(
                 var op = Opinion(
                     idOpi,
                     dc.document.get("idEvento").toString(),
+                    dc.document.get("userNameAutor").toString(),
                     coment,
                     foto,
                     longLugarInteres,

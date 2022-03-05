@@ -128,7 +128,8 @@ class ActivatedUserHomeActivity : AppCompatActivity() {
 
     override fun onBackPressed(){
 
-        if(VariablesCompartidas.adminMode){
+        if(VariablesCompartidas.adminLikeUserMode){
+            VariablesCompartidas.adminLikeUserMode = false
             finish()
         }else{
             AlertDialog.Builder(this)

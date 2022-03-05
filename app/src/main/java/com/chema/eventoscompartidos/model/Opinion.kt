@@ -6,6 +6,7 @@ import java.util.*
 data class Opinion(
     var idOpinion: String?,
     var idEvento: String?,
+    var userNameAutor: String?,
     var comentario: String?,
     var foto: String?,
     var longLugarInteres: String?,

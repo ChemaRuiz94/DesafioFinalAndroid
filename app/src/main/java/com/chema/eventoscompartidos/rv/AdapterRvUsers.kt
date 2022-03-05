@@ -40,6 +40,8 @@ class AdapterRvUsers (
             holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_no)
             holder.nombre.text = usuario.userName
 
+            checkAsist(holder,usuario)
+
             holder.itemView.setOnClickListener {
                 change_tick(holder,position)
                 //Toast.makeText(context, "${usuario.userName} añadido", Toast.LENGTH_SHORT).show()
@@ -48,6 +50,17 @@ class AdapterRvUsers (
 
 
 
+    }
+
+    fun checkAsist(holder: ViewHolder,usuario: User){
+        if (VariablesCompartidas.emailUsuariosEventoActual.contains(usuario.email)){
+            holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_yes)
+            holder.txt_asiste.text = "Asiste"
+        }else{
+            holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_no)
+            holder.txt_asiste.text = "No asiste"
+
+        }
     }
 
     fun change_tick(holder: ViewHolder, position: Int){

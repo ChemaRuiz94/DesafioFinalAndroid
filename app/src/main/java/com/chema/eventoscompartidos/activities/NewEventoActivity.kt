@@ -85,6 +85,7 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
 
         //limpiamos los usuarios
         VariablesCompartidas.usuariosEventoActual.clear()
+        VariablesCompartidas.emailUsuariosEventoActual.clear()
 
         runBlocking {
             val job : Job = launch(context = Dispatchers.Default) {
@@ -112,7 +113,7 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
             val mapIntent = Intent(this, MapsActivity::class.java).apply {
                 //putExtra("email",email)
             }
-            startActivity(mapIntent)
+            startActivityForResult(mapIntent,1)
         }
 
         flt_btn_save_event.setOnClickListener{
@@ -128,11 +129,13 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
     override fun onResume() {
         super.onResume()
         //cargarMapa()
-        cambiar_UbicacionActual()
+        //cambiar_UbicacionActual()
+        cargarRV()
     }
 
     override fun onRestart() {
         super.onRestart()
+        /*
         usuarios.clear()
         VariablesCompartidas.usuariosEventoActual.clear()
         runBlocking {
@@ -144,6 +147,8 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
             job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
         }
         //cargarMapa()
+
+         */
         cargarRV()
 
     }
@@ -270,6 +275,7 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
             }
     }
 
+    /*
     private fun cambiar_UbicacionActual(){
 
         if(VariablesCompartidas.latEventoActual != null && VariablesCompartidas.lonEventoActual != null){
@@ -284,6 +290,8 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
         }
     }
 
+     */
+
     override fun onMapReady(p0: GoogleMap?) {
         mMap = p0!!
         mMap.mapType=GoogleMap.MAP_TYPE_NORMAL
@@ -294,5 +302,19 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
     }
 
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(VariablesCompartidas.latEventoActual != null && VariablesCompartidas.lonEventoActual != null){
+            ubicacionActual = LatLng(VariablesCompartidas.latEventoActual.toString().toDouble(),VariablesCompartidas.lonEventoActual.toString().toDouble())
+            ed_txt_ubicacion.setText("${ubicacionActual}")
+
+            ubicacionCambiada = true
+
+            val ubi = LatLng(VariablesCompartidas.latEventoActual.toString().toDouble(), VariablesCompartidas.lonEventoActual.toString().toDouble())
+            mMap?.addMarker(MarkerOptions().position(ubi).title("${ed_txt_titulo_evento.text}"))
+            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubi,15f))
+        }
+    }
 
 }

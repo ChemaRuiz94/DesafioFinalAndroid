@@ -103,6 +103,7 @@ class DetalleEventoActivity : AppCompatActivity() {
     //++++++++++++CREAR OPINION DE TEXTO++++++++++++++++++
     fun crearComentario():Opinion{
         val idOpin : String = UUID.randomUUID().toString()
+        val userNameAutor : String = VariablesCompartidas.userActual!!.userName
         val st = ed_txt_comentario_detalle.text.toString()
         val fecha = Calendar.getInstance()
         val hora = fecha.get(Calendar.HOUR)
@@ -110,7 +111,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         val dia = fecha.get(Calendar.DAY_OF_MONTH)
         val mes = fecha.get(Calendar.MONTH)
         val year = fecha.get(Calendar.YEAR)
-        return Opinion(idOpin,idEventoActual,st,null,null,null,hora,min,dia,mes,year)
+        return Opinion(idOpin,idEventoActual,userNameAutor,st,null,null,null,hora,min,dia,mes,year)
     }
 
     fun saveComentarioFirebase(opinion: Opinion){
@@ -206,6 +207,7 @@ class DetalleEventoActivity : AppCompatActivity() {
                 var op = Opinion(
                     dc.document.get("idOpinion").toString(),
                     dc.document.get("idEvento").toString(),
+                    dc.document.get("userNameAutor").toString(),
                     coment,
                     foto,
                     longLugarInteres,

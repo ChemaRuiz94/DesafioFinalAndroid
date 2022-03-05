@@ -45,7 +45,7 @@ class AdapterRvOpiniones (
         val fechaST = "${dia}/${mon} ${hora}:${min}"
 
         holder.txt_hora_comentario.text = (fechaST)
-        holder.txt_nombreUser_detalle.text = (VariablesCompartidas.userActual!!.userName)
+        holder.txt_nombreUser_detalle.text = (opinion.userNameAutor)
 
         if(opinion.comentario != null){
             holder.ed_txt_multiline_opinion.setText(opinion.comentario)
