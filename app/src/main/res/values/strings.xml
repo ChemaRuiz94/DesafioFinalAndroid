@@ -37,7 +37,10 @@
     <string name="asistentesEvento">Attendees to the event</string>
     <string name="nuevoEvento">New event</string>
     <string name="asistToTheEvent">Sign up for the event?</string>
+    <string name="editEvent">Edit event?</string>
+    <string name="editEventAsistant">Edit event attend?</string>
     <string name="disapointEvent">Cancel attendance?</string>
+    <string name="edit">Edit?</string>
     <string name="nameEvento">Event Name...</string>
     <string name="Date">Date</string>
     <string name="Hour">Hour</string>

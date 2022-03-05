@@ -29,7 +29,6 @@ class AdminActivity : AppCompatActivity() {
 
         btn_user.setOnClickListener{
             var myIntent = Intent(this, ActivatedUserHomeActivity::class.java)
-            VariablesCompartidas.adminMode = false
             startActivity(myIntent)
         }
     }

@@ -21,6 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EventosCompartidos">
         <activity
+            android:name=".activities.EditEventActivity"
+            android:exported="true" />
+        <activity
             android:name=".AdminTabbActivity"
             android:exported="true"
             android:label="@string/title_activity_admin_tabb"

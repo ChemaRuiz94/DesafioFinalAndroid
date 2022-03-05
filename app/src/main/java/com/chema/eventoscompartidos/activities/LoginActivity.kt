@@ -128,31 +128,6 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    /*
-    private fun findAllRoles(): ArrayList<Rol>{
-        var rolesBd : ArrayList<Rol> = ArrayList()
-        db.collection("${Constantes.COLLECTION_ROL}")
-            .get()
-            .addOnSuccessListener { roles ->
-                //Existe
-                for (rol in roles) {
-                    Log.d(TAG, "${rol.id} => ${rol.data}")
-                    var rolBD = Rol(
-                        rol.get("idRol").toString().toInt(),
-                        rol.get("nombreRol").toString()
-                    )
-                    rolesBd.add(rolBD)
-                }
-            }
-            .addOnFailureListener { exception ->
-                //No existe
-                Log.w(TAG, "Error getting documents: ", exception)
-            }
-        return rolesBd
-    }
-
-
-     */
     private fun findUserByEmail(email: String){
 
         Toast.makeText(this, email, Toast.LENGTH_SHORT).show()
@@ -240,13 +215,10 @@ class LoginActivity : AppCompatActivity() {
                     auth.signInWithCredential(credential).addOnCompleteListener {
                         if (it.isSuccessful){
 
-                            Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
                             val user = auth.currentUser!!
                             VariablesCompartidas.emailUsuarioActual = user.email!!
 
                             findUserByEmail(user.email!!)
-                            //irHome(account.email?:"")  //Esto de los interrogantes es por si está vacío el email.
-                            //Toast.makeText(this, " IR A HOME ", Toast.LENGTH_SHORT).show()
                         } else {
                             showAlert()
                         }

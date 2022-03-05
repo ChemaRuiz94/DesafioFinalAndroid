@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chema.eventoscompartidos.R
 import com.chema.eventoscompartidos.activities.ActivatedUserHomeActivity
 import com.chema.eventoscompartidos.activities.DetalleEventoActivity
+import com.chema.eventoscompartidos.activities.EditEventActivity
 import com.chema.eventoscompartidos.fragment.MyEventsFragments
 import com.chema.eventoscompartidos.model.Evento
 import com.chema.eventoscompartidos.model.Opinion
@@ -68,8 +69,8 @@ class AdapterRvEventos(
         if(VariablesCompartidas.adminMode && allEvents){
 
             holder.itemView.setOnClickListener{
-                //EDITAR
-                Toast.makeText(context, "EDITAR EVENTO / DETALLE", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, "EDITAR EVENTO / DETALLE", Toast.LENGTH_SHORT).show()
+                chekcEditEvent(evento)
             }
 
             holder.itemView.setOnLongClickListener(View.OnLongClickListener {
@@ -95,7 +96,7 @@ class AdapterRvEventos(
 
     }
 
-    //++++++++++++++++METODOS++++++++++
+    //++++++++++++++++METODOS ELIMINAR EVENTO++++++++++
     private fun checkEliminar(evento: Evento){
 
         AlertDialog.Builder(context).setTitle(R.string.deleteThisEvent)
@@ -125,7 +126,7 @@ class AdapterRvEventos(
         }
     }
 
-
+    //++++++++++++++++METODOS AÑADIR/QUITAR USUARIO EVENTO++++++++++
     private fun checkUserInEvnt(evento: Evento){
         val db = FirebaseFirestore.getInstance()
         var eventoMod = evento
@@ -169,63 +170,22 @@ class AdapterRvEventos(
                 }.create().show()
         }
     }
-    /*
 
-    private fun checkUserInEvnt(evento: Evento) : Boolean{
-        var correcto = false
+    //++++++++++++++++METODOS EDITAR EVENTO++++++++++
+    private fun chekcEditEvent(evento: Evento){
+        AlertDialog.Builder(context).setTitle(R.string.editEvent)
+            .setPositiveButton(R.string.edit) { view, _ ->
 
-        for (u in evento.asistentes!!){
-            if(u.userId.equals(VariablesCompartidas.userActual!!.userId)){
-                correcto = true
-            }
-        }
-        return correcto
+                val homeIntent = Intent(context, EditEventActivity::class.java).apply {
+                    putExtra("idEvento",evento.idEvento.toString())
+                }
+                context.startActivity(homeIntent)
 
+                view.dismiss()
+            }.setNegativeButton(R.string.cancelar) { view, _ ->
+                view.dismiss()
+            }.create().show()
     }
-
-    private fun addUserToEvent(evento: Evento, correcto : Boolean){
-        val db = FirebaseFirestore.getInstance()
-        var eventoMod = evento
-
-        if(correcto){
-
-            AlertDialog.Builder(context).setTitle(R.string.disapointEvent)
-                .setPositiveButton(R.string.aceptar) { view, _ ->
-
-                    eventoMod.asistentes!!.remove(VariablesCompartidas.userActual)
-                    db.collection("${Constantes.collectionEvents}")
-                        .document("${evento.idEvento}")
-                        .set(eventoMod).addOnSuccessListener {
-                            Toast.makeText(context, R.string.Suscesfull, Toast.LENGTH_SHORT).show()
-                        }.addOnFailureListener{
-                            Toast.makeText(context, R.string.ERROR, Toast.LENGTH_SHORT).show()
-                        }
-
-                }.setNegativeButton(R.string.cancelar) { view, _ ->//cancela
-                    view.dismiss()
-                }.create().show()
-
-        }else{
-
-            AlertDialog.Builder(context).setTitle(R.string.asistToTheEvent)
-                .setPositiveButton(R.string.aceptar) { view, _ ->
-
-                    eventoMod.asistentes!!.add(VariablesCompartidas.userActual!!)
-                    db.collection("${Constantes.collectionEvents}")
-                        .document("${evento.idEvento}")
-                        .set(eventoMod).addOnSuccessListener {
-                            Toast.makeText(context, R.string.Suscesfull, Toast.LENGTH_SHORT).show()
-                        }.addOnFailureListener{
-                            Toast.makeText(context, R.string.ERROR, Toast.LENGTH_SHORT).show()
-                        }
-
-                }.setNegativeButton(R.string.cancelar) { view, _ ->//cancela
-                    view.dismiss()
-                }.create().show()
-        }
-    }
-
-     */
 
     //+++++++++++++++++++++++++++++++
     suspend fun getDataFromFireStore(evento: Evento)  : QuerySnapshot? {

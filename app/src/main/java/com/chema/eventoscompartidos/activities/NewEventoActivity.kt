@@ -197,7 +197,7 @@ class NewEventoActivity : AppCompatActivity(), OnMapReadyCallback{
         rv = findViewById(R.id.rv_usuarios)
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
-        miAdapter = AdapterRvUsers(this, usuarios)
+        miAdapter = AdapterRvUsers(this, usuarios,false)
         rv.adapter = miAdapter
 
     }
