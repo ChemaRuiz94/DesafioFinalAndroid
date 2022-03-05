@@ -42,6 +42,8 @@ class DetalleEventoActivity : AppCompatActivity() {
 
     private var idEventoActual : String? = null
     private lateinit var opiniones : ArrayList<Opinion>
+    private var opinionesOrdenadas : ArrayList<Opinion> = ArrayList()
+    //private var opinionesFechas = mutableListOf<Date>()
 
     private lateinit var rv : RecyclerView
     private lateinit var miAdapter: AdapterRvOpiniones
@@ -79,6 +81,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         opiniones.add(opinion)
 
          */
+
         ed_txt_comentario_detalle = findViewById(R.id.ed_txt_comentario_detalle)
         flt_btn_sendComentario = findViewById(R.id.flt_btn_sendComentario)
         txt_nombreEvento_detalle = findViewById(R.id.txt_nombreEvento_detalle)
@@ -95,9 +98,28 @@ class DetalleEventoActivity : AppCompatActivity() {
                 refreshRV()
             }
         }
+        opinionesOrdenadas.clear()
+        opinionesOrdenadas =  ordenarOpiniones()
         cargarRV()
     }
 
+    private fun ordenarOpiniones() : ArrayList<Opinion>{
+        val opiniOrdenadas = opiniones.sortedWith(compareBy({ it.yearOpinion }, { it.mesOpinion },{it.diaOpinion}, { it.horaOpinion },{it.minOpinion}))
+
+        /*
+        for(opi in opiniones){
+            val fecha = Date(opi.yearOpinion,opi.mesOpinion,opi.diaOpinion)
+            opinionesFechas.add(fecha)
+            opinionesFechas.sortWith(compareBy<Date> { it.year }.thenBy { it.month }.thenBy { it.day })
+        }
+
+         */
+
+        for (opi in opiniOrdenadas){
+            opinionesOrdenadas.add(opi)
+        }
+        return opinionesOrdenadas
+    }
 
 
     //++++++++++++CREAR OPINION DE TEXTO++++++++++++++++++
@@ -147,7 +169,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         rv = findViewById(R.id.rv_opiniones_detalle)
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
-        miAdapter = AdapterRvOpiniones(this, opiniones)
+        miAdapter = AdapterRvOpiniones(this, opinionesOrdenadas)
         rv.adapter = miAdapter
     }
 
@@ -161,6 +183,8 @@ class DetalleEventoActivity : AppCompatActivity() {
             //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
             job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
         }
+        opinionesOrdenadas.clear()
+        opinionesOrdenadas =  ordenarOpiniones()
         cargarRV()
     }
 
