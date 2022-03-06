@@ -41,6 +41,7 @@ class AdapterRvOpiniones (
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterRvOpiniones.ViewHolder {
 
         return AdapterRvOpiniones.ViewHolder(
+
             LayoutInflater.from(context).inflate(R.layout.item_opinion_comentario_layout, parent, false)
         )
     }
@@ -69,39 +70,31 @@ class AdapterRvOpiniones (
 
         }
 
-        /*
+/*
         //AQUI OCULTAMOS UNOS COMPONENTES U OTROS SEGUN EL COMENTARIO
         if(opinion.comentario != null){
-            holder.frm_map_opinion.isEnabled = false
+            //holder.frm_map_opinion.isEnabled = false
             holder.frm_map_opinion.isVisible = false
-            holder.img_opinion.isEnabled = false
+            //holder.img_opinion.isEnabled = false
             holder.img_opinion.isVisible = false
             holder.ed_txt_multiline_opinion.setText(opinion.comentario)
         }else if(opinion.foto != null){
-            holder.frm_map_opinion.isEnabled = false
+            //holder.frm_map_opinion.isEnabled = false
             holder.frm_map_opinion.isVisible = false
-            holder.ed_txt_multiline_opinion.isEnabled = false
+            //holder.ed_txt_multiline_opinion.isEnabled = false
             holder.ed_txt_multiline_opinion.isVisible = false
             val imgSt = opinion.foto
             val img : Bitmap? = Auxiliar.StringToBitMap(imgSt)
             holder.img_opinion.setImageBitmap(img)
-        }else{
-            holder.img_opinion.isEnabled = false
+        }else if (opinion.latLugarInteres != null && opinion.longLugarInteres != null){
+            //holder.img_opinion.isEnabled = false
             holder.img_opinion.isVisible = false
-            holder.ed_txt_multiline_opinion.isEnabled = false
+            //holder.ed_txt_multiline_opinion.isEnabled = false
             holder.ed_txt_multiline_opinion.isVisible = false
 
         }
 
-
-         */
-
-        holder.itemView.setOnLongClickListener(View.OnLongClickListener {
-            checkEliminar(opinion)
-            false
-        })
-
-
+ */
 
     }
 
@@ -167,7 +160,7 @@ class AdapterRvOpiniones (
                     dc.document.get("lonUbi").toString(),
                     dc.document.get("asistentes") as ArrayList<User>?,
                     dc.document.get("emailAsistentes") as ArrayList<String>?,
-                    dc.document.get("idAsistentesHora") as HashMap<UUID, Date>?,
+                    dc.document.get("idAsistentesHora") as HashMap<String, Calendar>?,
                     dc.document.get("listaOpiniones") as ArrayList<Opinion>?
                 )
                 if(ev.listaOpiniones!!.contains(opinion)){

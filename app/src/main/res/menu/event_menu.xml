@@ -8,4 +8,8 @@
         android:id="@+id/location_opinion"
         android:title="@string/addLocation" />
 
+    <item
+        android:id="@+id/confirmArrival"
+        android:title="@string/confirmArrival" />
+
 </menu>

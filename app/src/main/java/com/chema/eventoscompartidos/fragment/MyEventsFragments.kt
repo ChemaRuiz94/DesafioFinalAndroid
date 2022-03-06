@@ -148,7 +148,7 @@ class MyEventsFragments : Fragment() {
                     dc.document.get("lonUbi").toString(),
                     dc.document.get("asistentes") as ArrayList<User>?,
                     dc.document.get("emailAsistentes") as ArrayList<String>?,
-                    dc.document.get("idAsistentesHora") as HashMap<UUID,Date>?,
+                    dc.document.get("idAsistentesHora") as HashMap<String,Calendar>?,
                     dc.document.get("listaOpiniones") as ArrayList<Opinion>?
                 )
                 eventos.add(al)

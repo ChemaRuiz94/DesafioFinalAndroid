@@ -59,6 +59,7 @@
     <string name="strGaleria">Gallery</string>
     <string name="addPhoto">Add Photo</string>
     <string name="addLocation">Add Location</string>
+    <string name="confirmArrival">Confirm Arrival</string>
 
 
     <string name="satellite_mode">Satellite Mode</string>
@@ -83,4 +84,5 @@
     <string name="title_activity_admin_nav_draw">AdminNavDrawActivity</string>
     <string name="title_activity_admin_nav_home">AdminNavHomeActivity</string>
     <string name="title_activity_admin_tabb">AdminTabbActivity</string>
+    <string name="title_activity_maps_confirm_arrival">MapsConfirmArrivalActivity</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.chema.eventoscompartidos.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -60,7 +61,6 @@ class DetalleEventoActivity : AppCompatActivity() {
         idEventoActual = (bundle?.getString("idEventoActual"))
         opiniones = ArrayList<Opinion>()
 
-        Log.d("CHEMA2_coment","pre run")
 
         runBlocking {
             val job : Job = launch(context = Dispatchers.Default) {
@@ -71,16 +71,6 @@ class DetalleEventoActivity : AppCompatActivity() {
             job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
         }
 
-        Log.d("CHEMA2_coment","post run")
-
-
-        /*
-        val idOpi = UUID.randomUUID().toString()
-        val fecha = Calendar.getInstance()
-        val opinion = Opinion(idOpi,idEventoActual.toString(),"ejemplito",null,null,null,fecha)
-        opiniones.add(opinion)
-
-         */
 
         ed_txt_comentario_detalle = findViewById(R.id.ed_txt_comentario_detalle)
         flt_btn_sendComentario = findViewById(R.id.flt_btn_sendComentario)
@@ -106,14 +96,6 @@ class DetalleEventoActivity : AppCompatActivity() {
     private fun ordenarOpiniones() : ArrayList<Opinion>{
         val opiniOrdenadas = opiniones.sortedWith(compareBy({ it.yearOpinion }, { it.mesOpinion },{it.diaOpinion}, { it.horaOpinion },{it.minOpinion}))
 
-        /*
-        for(opi in opiniones){
-            val fecha = Date(opi.yearOpinion,opi.mesOpinion,opi.diaOpinion)
-            opinionesFechas.add(fecha)
-            opinionesFechas.sortWith(compareBy<Date> { it.year }.thenBy { it.month }.thenBy { it.day })
-        }
-
-         */
 
         for (opi in opiniOrdenadas){
             opinionesOrdenadas.add(opi)
@@ -170,6 +152,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
         miAdapter = AdapterRvOpiniones(this, opinionesOrdenadas)
+        miAdapter.onCreateViewHolder(rv,2)
         rv.adapter = miAdapter
     }
 
@@ -245,9 +228,17 @@ class DetalleEventoActivity : AppCompatActivity() {
                 if(op.idEvento!!.equals(idEventoActual)){
                     opiniones.add(op)
                 }
-                Log.d("CHEMA2_op","${op}")
             }
         }
+    }
+
+    //++++++++++++CONFIRMAR ASIST++++++++++++++++++
+    private fun confirmAsist(){
+        val asistIntent = Intent(this, MapsConfirmArrivalActivity::class.java).apply {
+            //putExtra("nombreEvento",evento.nombreEvento)
+            //VariblesComunes.eventoActual = evento
+        }
+        startActivity(asistIntent)
     }
 
     //++++++++++++MENU++++++++++++++++++
@@ -260,6 +251,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.foto_opinion -> a  = 1
             R.id.location_opinion ->  a = 2
+            R.id.confirmArrival ->  confirmAsist()
         }
         return super.onOptionsItemSelected(item)
     }

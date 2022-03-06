@@ -18,6 +18,6 @@ data class Evento(
     var lonUbi: String?,
     var asistentes: ArrayList<User>?,
     var emailAsistentes: ArrayList<String>?,
-    var idAsistentesHora: HashMap<UUID,Date>?,
+    var idAsistentesHora: HashMap<String,Calendar>?,
     var listaOpiniones: ArrayList<Opinion>?
 ) : Serializable
