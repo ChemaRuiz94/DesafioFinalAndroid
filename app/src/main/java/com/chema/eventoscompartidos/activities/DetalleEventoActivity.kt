@@ -1,8 +1,14 @@
 package com.chema.eventoscompartidos.activities
 
+import android.Manifest
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -10,6 +16,9 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chema.eventoscompartidos.R
@@ -18,6 +27,7 @@ import com.chema.eventoscompartidos.model.Opinion
 import com.chema.eventoscompartidos.model.User
 import com.chema.eventoscompartidos.rv.AdapterRvEventos
 import com.chema.eventoscompartidos.rv.AdapterRvOpiniones
+import com.chema.eventoscompartidos.utils.Auxiliar
 import com.chema.eventoscompartidos.utils.Constantes
 import com.chema.eventoscompartidos.utils.VariablesCompartidas
 import com.google.android.gms.maps.GoogleMap
@@ -32,6 +42,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import java.io.FileNotFoundException
+import java.io.InputStream
 import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
@@ -51,6 +63,8 @@ class DetalleEventoActivity : AppCompatActivity() {
     private lateinit var ed_txt_comentario_detalle : EditText
     private lateinit var flt_btn_sendComentario : FloatingActionButton
     private lateinit var txt_nombreEvento_detalle : TextView
+
+    private var photo: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,11 +94,11 @@ class DetalleEventoActivity : AppCompatActivity() {
 
 
         flt_btn_sendComentario.setOnClickListener{
-
-            if(ed_txt_comentario_detalle.text.toString().trim().isNotEmpty()){
+            val text  = ed_txt_comentario_detalle.text.toString()
+            if(text.trim().isNotEmpty()){
 
                 //guarda el comentario a firebase
-                saveComentarioFirebase(crearComentario())
+                saveComentarioFirebase(crearComentario(text,null,null,null))
                 refreshRV()
             }
         }
@@ -105,17 +119,27 @@ class DetalleEventoActivity : AppCompatActivity() {
 
 
     //++++++++++++CREAR OPINION DE TEXTO++++++++++++++++++
-    fun crearComentario():Opinion{
+    fun crearComentario(coment: String?, photo: String?, latImport: String?, longImport: String?):Opinion{
         val idOpin : String = UUID.randomUUID().toString()
         val userNameAutor : String = VariablesCompartidas.userActual!!.userName
-        val st = ed_txt_comentario_detalle.text.toString()
         val fecha = Calendar.getInstance()
         val hora = fecha.get(Calendar.HOUR)
         val min = fecha.get(Calendar.MINUTE)
         val dia = fecha.get(Calendar.DAY_OF_MONTH)
         val mes = fecha.get(Calendar.MONTH)
         val year = fecha.get(Calendar.YEAR)
-        return Opinion(idOpin,idEventoActual,userNameAutor,st,null,null,null,hora,min,dia,mes,year)
+        return Opinion(idOpin,idEventoActual,userNameAutor,coment,photo,longImport,latImport,hora,min,dia,mes,year)
+    }
+
+    fun crearOpinionFoto(){
+        val idOpin : String = UUID.randomUUID().toString()
+        val userNameAutor : String = VariablesCompartidas.userActual!!.userName
+        val fecha = Calendar.getInstance()
+        val hora = fecha.get(Calendar.HOUR)
+        val min = fecha.get(Calendar.MINUTE)
+        val dia = fecha.get(Calendar.DAY_OF_MONTH)
+        val mes = fecha.get(Calendar.MONTH)
+        val year = fecha.get(Calendar.YEAR)
     }
 
     fun saveComentarioFirebase(opinion: Opinion){
@@ -152,7 +176,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
         miAdapter = AdapterRvOpiniones(this, opinionesOrdenadas)
-        miAdapter.onCreateViewHolder(rv,2)
+        //miAdapter.onCreateViewHolder(rv,2)
         rv.adapter = miAdapter
     }
 
@@ -249,10 +273,93 @@ class DetalleEventoActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.foto_opinion -> a  = 1
+            R.id.foto_opinion ->  cambiarFoto()
             R.id.location_opinion ->  a = 2
             R.id.confirmArrival ->  confirmAsist()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun addFotoComent(){
+
+    }
+
+    fun cambiarFoto() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.chosePhoto))
+            .setMessage(getString(R.string.strMensajeElegirFoto))
+            .setPositiveButton(getString(R.string.strCamara)) { view, _ ->
+                hacerFoto()
+                view.dismiss()
+            }
+            .setNegativeButton(getString(R.string.strGaleria)) { view, _ ->
+                elegirDeGaleria()
+                view.dismiss()
+            }
+            .setCancelable(true)
+            .create()
+            .show()
+    }
+
+    private fun elegirDeGaleria() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(
+            Intent.createChooser(intent, "Seleccione una imagen"),
+            Constantes.CODE_GALLERY
+        )
+    }
+
+    private fun hacerFoto() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_DENIED
+        )
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.CAMERA),
+                Constantes.CODE_CAMERA
+            )
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, Constantes.CODE_CAMERA)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            Constantes.CODE_CAMERA -> {
+
+                if (resultCode == Activity.RESULT_OK) {
+                    photo = data?.extras?.get("data") as Bitmap
+                    saveComentarioFirebase(crearComentario(null,Auxiliar.ImageToString(photo!!),null,null))
+                    refreshRV()
+                }
+            }
+
+            Constantes.CODE_GALLERY -> {
+                if (resultCode === Activity.RESULT_OK) {
+                    val selectedImage = data?.data
+                    val selectedPath: String? = selectedImage?.path
+                    if (selectedPath != null) {
+                        var imageStream: InputStream? = null
+                        try {
+                            imageStream = selectedImage.let {
+                                this.contentResolver.openInputStream(
+                                    it
+                                )
+                            }
+                        } catch (e: FileNotFoundException) {
+                            e.printStackTrace()
+                        }
+                        val bmp = BitmapFactory.decodeStream(imageStream)
+                        photo = Bitmap.createScaledBitmap(bmp, 200, 300, true)
+                        saveComentarioFirebase(crearComentario(null,Auxiliar.ImageToString(photo!!),null,null))
+                        refreshRV()
+                    }
+                }
+            }
+        }
     }
 }

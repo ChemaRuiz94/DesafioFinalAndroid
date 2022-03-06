@@ -29,25 +29,57 @@ import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
+
+
+
 class AdapterRvOpiniones (
     private val context: AppCompatActivity,
     private val opiniones: ArrayList<Opinion>
-) : RecyclerView.Adapter<AdapterRvOpiniones.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val LAYOUT_ONE = 0
+    private val LAYOUT_TWO = 1
 
     override fun getItemCount(): Int {
         return opiniones.size
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterRvOpiniones.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
+        var view: View? = null
+        var viewHolder: RecyclerView.ViewHolder? = null
+
+        if (viewType === LAYOUT_ONE) {
+            view = LayoutInflater.from(context).inflate(R.layout.item_opinion_comentario_layout, parent, false)
+
+            viewHolder = ViewHolderComentario(view)
+        } else if(viewType === LAYOUT_TWO) {
+            view = LayoutInflater.from(context).inflate(R.layout.item_opinon_foto_layout, parent, false)
+            viewHolder = ViewHolderFoto(view)
+        }else{
+            view = LayoutInflater.from(context).inflate(R.layout.item_opinon_foto_layout, parent, false)
+            viewHolder = ViewHolderFoto(view)
+        }
+
+        return viewHolder
+        /*
         return AdapterRvOpiniones.ViewHolder(
 
             LayoutInflater.from(context).inflate(R.layout.item_opinion_comentario_layout, parent, false)
         )
+
+         */
     }
 
-    override fun onBindViewHolder(holder: AdapterRvOpiniones.ViewHolder, position: Int) {
+    override fun getItemViewType(position: Int): Int {
+        return if (position == 0) LAYOUT_ONE else LAYOUT_TWO
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
         var opinion: Opinion = opiniones[position]
+
+        val autor = opinion.userNameAutor
 
         //AQUI PONEMOS LA FECHA
         val hora = opinion.horaOpinion
@@ -56,17 +88,30 @@ class AdapterRvOpiniones (
         val mon = opinion.yearOpinion
         val fechaST = "${dia}/${mon} ${hora}:${min}"
 
-        holder.txt_hora_comentario.text = (fechaST)
-        holder.txt_nombreUser_detalle.text = (opinion.userNameAutor)
+        if(holder.itemViewType == LAYOUT_ONE){
 
-        if(opinion.comentario != null){
-            holder.ed_txt_multiline_opinion.setText(opinion.comentario)
+            var viewHolderComent = holder as ViewHolderComentario
+
+            viewHolderComent.txt_hora_comentario.text = (fechaST)
+            viewHolderComent.txt_nombreUser_detalle.text = (autor)
+
+            viewHolderComent.ed_txt_multiline_opinion.setText(opinion.comentario)
             if(opinion.userNameAutor.equals(VariablesCompartidas.userActual!!.userName)){
-                holder.ed_txt_multiline_opinion.setOnLongClickListener(View.OnLongClickListener {
+                viewHolderComent.ed_txt_multiline_opinion.setOnLongClickListener(View.OnLongClickListener {
                     checkEliminar(opinion)
                     false
                 })
             }
+
+        }else if(holder.itemViewType == LAYOUT_TWO){
+
+            var viewHolderFoto= holder as ViewHolderFoto
+
+            viewHolderFoto.txt_hora_comentario.text = (fechaST)
+            viewHolderFoto.txt_nombreUser_detalle.text = (autor)
+
+            viewHolderFoto.img_opinion.setImageBitmap(Auxiliar.StringToBitMap(opinion.foto))
+        }else{
 
         }
 
@@ -102,7 +147,7 @@ class AdapterRvOpiniones (
     private fun checkEliminar(opinion: Opinion) {
         AlertDialog.Builder(context).setTitle(R.string.deleteThisOpinion)
             .setPositiveButton(R.string.delete) { view, _ ->
-                //elimina evento
+
                 val db = FirebaseFirestore.getInstance()
                 Log.d("PRUEBA1", "pre runBlock1")
                 checkEliminarOpinionesDelEvento(opinion)
@@ -178,13 +223,19 @@ class AdapterRvOpiniones (
     }
 
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolderComentario(view: View) : RecyclerView.ViewHolder(view) {
 
         val ed_txt_multiline_opinion = view.findViewById<EditText>(R.id.ed_txt_multiline_opinion)
-        //val img_opinion = view.findViewById<ImageView>(R.id.img_opinion)
-        //val frm_map_opinion = view.findViewById<FrameLayout>(R.id.frm_map_opinion)
         val txt_hora_comentario = view.findViewById<TextView>(R.id.txt_hora_comentario)
         val txt_nombreUser_detalle = view.findViewById<TextView>(R.id.txt_nombreUser_detalle)
+
+    }
+
+    class ViewHolderFoto(view: View) : RecyclerView.ViewHolder(view) {
+
+        val img_opinion = view.findViewById<ImageView>(R.id.um_foto_comentario)
+        val txt_hora_comentario = view.findViewById<TextView>(R.id.txt_hora_comentario_foto)
+        val txt_nombreUser_detalle = view.findViewById<TextView>(R.id.txt_nombreUser_detalle_foto)
 
     }
 }

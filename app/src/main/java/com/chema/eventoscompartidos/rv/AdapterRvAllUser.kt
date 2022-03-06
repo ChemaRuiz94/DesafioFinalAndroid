@@ -1,6 +1,7 @@
 package com.chema.eventoscompartidos.rv
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,12 +13,24 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.chema.eventoscompartidos.R
+import com.chema.eventoscompartidos.model.Evento
+import com.chema.eventoscompartidos.model.Opinion
 import com.chema.eventoscompartidos.model.User
 import com.chema.eventoscompartidos.utils.Auxiliar
 import com.chema.eventoscompartidos.utils.Constantes
 import com.chema.eventoscompartidos.utils.VariablesCompartidas
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
+import java.lang.Exception
+import java.util.*
+import kotlin.collections.ArrayList
 
 class AdapterRvAllUser (
     private val context: AppCompatActivity,
@@ -54,6 +67,11 @@ class AdapterRvAllUser (
             holder.switchActivated.setText(R.string.Disabled)
         }
 
+        holder.itemView.setOnLongClickListener(View.OnLongClickListener {
+            checkEliminar(usuario)
+            false
+        })
+
         holder.switchActivated.setOnClickListener{
             AlertDialog.Builder(context).setTitle(R.string.changeActivateUser)
                 .setPositiveButton(R.string.change) { view, _ ->
@@ -70,6 +88,33 @@ class AdapterRvAllUser (
         }
 
 
+    }
+
+    private fun checkEliminar(usuario: User) {
+        AlertDialog.Builder(context).setTitle(R.string.deleteThisUser)
+            .setPositiveButton(R.string.delete) { view, _ ->
+
+                val db = FirebaseFirestore.getInstance()
+
+                checkEliminarUsersEventos(usuario)
+                db.collection("${Constantes.collectionUser}").document("${usuario.userId}").delete()
+
+                Toast.makeText(context, R.string.Suscesfull, Toast.LENGTH_SHORT).show()
+                view.dismiss()
+            }.setNegativeButton(R.string.cancelar) { view, _ ->//cancela
+                view.dismiss()
+            }.create().show()
+    }
+
+    private fun checkEliminarUsersEventos(usuario: User) {
+        runBlocking {
+            val job : Job = launch(context = Dispatchers.Default) {
+                val datos : QuerySnapshot = getDataFromFireStore() as QuerySnapshot //Obtenermos la colección
+                delDatos(datos as QuerySnapshot?,usuario)  //'Destripamos' la colección y la metemos en nuestro ArrayList
+            }
+            //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
+            job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
+        }
     }
 
     private fun changeActivatedUser(user: User, holder: ViewHolder){
@@ -92,6 +137,94 @@ class AdapterRvAllUser (
         db.collection("${Constantes.collectionUser}")
             .document(user.userId.toString())
             .set(user)
+    }
+
+    //+++++++++++++++++++++++++++++++
+    suspend fun getDataFromFireStore()  : QuerySnapshot? {
+
+        val db = FirebaseFirestore.getInstance()
+        return try{
+            val data = db.collection("${Constantes.collectionEvents}")
+                .get()
+                .await()
+            data
+        }catch (e : Exception){
+            null
+        }
+    }
+
+    private fun delDatos(datos: QuerySnapshot?, user: User) {
+        VariablesCompartidas.eventosUser.clear()
+        val db = FirebaseFirestore.getInstance()
+        for(dc: DocumentChange in datos?.documentChanges!!){
+            if (dc.type == DocumentChange.Type.ADDED){
+
+                var ev = Evento(
+                    dc.document.get("idEvento").toString(),
+                    dc.document.get("nombreEvento").toString(),
+                    dc.document.get("horaEvento").toString().toInt(),
+                    dc.document.get("minEvento").toString().toInt(),
+                    dc.document.get("diaEvento").toString().toInt(),
+                    dc.document.get("mesEvento").toString().toInt(),
+                    dc.document.get("yearEvento").toString().toInt(),
+                    dc.document.get("latUbi").toString(),
+                    dc.document.get("lonUbi").toString(),
+                    dc.document.get("asistentes") as ArrayList<User>?,
+                    dc.document.get("emailAsistentes") as ArrayList<String>?,
+                    dc.document.get("idAsistentesHora") as HashMap<String, Calendar>?,
+                    dc.document.get("listaOpiniones") as ArrayList<Opinion>?
+                )
+                if(ev.emailAsistentes!!.contains(user.email)){
+                    ev.emailAsistentes!!.remove(user.email)
+                    ev.asistentes!!.remove(user)
+                    VariablesCompartidas.eventosUser.add(ev)
+                }
+
+                /*
+                val idOpi = dc.document.get("idOpinion").toString()
+                var coment : String? = null
+                if(dc.document.get("comentario") != null){
+                    coment = dc.document.get("comentario").toString()
+                }
+                var foto : String? = null
+                if(dc.document.get("foto") != null){
+                    foto = dc.document.get("foto").toString()
+                }
+
+                var longLugarInteres : String? = null
+                if(dc.document.get("longLugarInteres") != null){
+                    longLugarInteres = dc.document.get("longLugarInteres").toString()
+                }
+                var latLugarInteres : String? = null
+                if(dc.document.get("latLugarInteres") != null){
+                    latLugarInteres = dc.document.get("latLugarInteres").toString()
+                }
+
+
+
+                var op = Opinion(
+                    idOpi,
+                    dc.document.get("idEvento").toString(),
+                    dc.document.get("userNameAutor").toString(),
+                    coment,
+                    foto,
+                    longLugarInteres,
+                    latLugarInteres,
+                    dc.document.get("horaOpinion").toString().toInt(),
+                    dc.document.get("minOpinion").toString().toInt(),
+                    dc.document.get("diaOpinion").toString().toInt(),
+                    dc.document.get("mesOpinion").toString().toInt(),
+                    dc.document.get("yearOpinion").toString().toInt()
+                )
+                Log.d("CHEMA2_op","${op}")
+                VariablesCompartidas.opinionesEventoActual.add(op)
+
+                 */
+            }
+        }
+        for (even in VariablesCompartidas.eventosUser){
+            db.collection("${Constantes.collectionEvents}").document("${even.idEvento}").set(even)
+        }
     }
 
     //++++++++++++++++++++++++++++++++++++++++++++++++++

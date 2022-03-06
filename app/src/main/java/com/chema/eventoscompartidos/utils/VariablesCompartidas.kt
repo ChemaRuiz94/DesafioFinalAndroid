@@ -32,5 +32,5 @@ object VariablesCompartidas {
     var opinionesEventoActual: ArrayList<Opinion> = ArrayList<Opinion>()
     var usuariosEventoActual: ArrayList<User> = ArrayList<User>()
     var emailUsuariosEventoActual: ArrayList<String> = ArrayList<String>()
-    //var eventosUserActual: ArrayList<Evento> = ArrayList<Evento>()
+    var eventosUser: ArrayList<Evento> = ArrayList<Evento>()
 }

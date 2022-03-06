@@ -20,6 +20,7 @@
     <string name="delete">Delete</string>
     <string name="deleteThisEvent">Delete this Event?</string>
     <string name="deleteThisOpinion">Delete this Coment?</string>
+    <string name="deleteThisUser">Delete this User?</string>
     <string name="ocurridoErrorAutenticacion">Se ha producido un error autenticando al usuairo</string>
     <string name="SignUpSuscesfull">SignUp Suscesfull</string>
     <string name="Suscesfull">Suscesfull</string>
