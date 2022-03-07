@@ -21,6 +21,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EventosCompartidos">
         <activity
+            android:name=".OpinionesBotNavActivity"
+            android:exported="true"
+            android:label="@string/title_activity_opiniones_bot_nav" />
+        <activity
             android:name=".activities.AddUserActivity"
             android:exported="true" />
         <!--

@@ -63,6 +63,7 @@
     <string name="addPhoto">Add Photo</string>
     <string name="addLocation">Add Location</string>
     <string name="confirmArrival">Confirm Arrival</string>
+    <string name="files">Files</string>
     <string name="confirmSelection">Confirm Selection</string>
 
 
@@ -90,4 +91,8 @@
     <string name="title_activity_admin_tabb">AdminTabbActivity</string>
     <string name="title_activity_maps_confirm_arrival">MapsConfirmArrivalActivity</string>
     <string name="title_activity_maps_opinion">MapsOpinionActivity</string>
+    <string name="title_activity_opiniones_bot_nav">OpinionesBotNavActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>

@@ -12,4 +12,7 @@
         android:id="@+id/confirmArrival"
         android:title="@string/confirmArrival" />
 
+    <item
+        android:id="@+id/files"
+        android:title="@string/files" />
 </menu>

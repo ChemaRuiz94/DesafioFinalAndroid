@@ -22,6 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.chema.eventoscompartidos.OpinionesBotNavActivity
 import com.chema.eventoscompartidos.R
 import com.chema.eventoscompartidos.model.Evento
 import com.chema.eventoscompartidos.model.Opinion
@@ -128,7 +129,7 @@ class DetalleEventoActivity : AppCompatActivity() {
 
     //++++++++++++++++++++++++++++++++++++++++++++++
     private fun ordenarOpiniones() : ArrayList<Opinion>{
-        val opiniOrdenadas = opiniones.sortedWith(compareBy({ it.yearOpinion }, { it.mesOpinion },{it.diaOpinion},{ it.horaOpinion },{it.minOpinion},{it.segOpinion}))
+        val opiniOrdenadas = VariablesCompartidas.opinionesEventoActual.sortedWith(compareBy({ it.yearOpinion }, { it.mesOpinion },{it.diaOpinion},{ it.horaOpinion },{it.minOpinion},{it.segOpinion}))
 
 
         for (opi in opiniOrdenadas){
@@ -218,7 +219,8 @@ class DetalleEventoActivity : AppCompatActivity() {
     }
 
     private fun obtenerDatos(datos: QuerySnapshot?) {
-        opiniones.clear()
+        //opiniones.clear()
+        VariablesCompartidas.opinionesEventoActual.clear()
         for(dc: DocumentChange in datos?.documentChanges!!){
             if (dc.type == DocumentChange.Type.ADDED){
 
@@ -262,7 +264,7 @@ class DetalleEventoActivity : AppCompatActivity() {
                     dc.document.get("yearOpinion").toString().toInt()
                 )
                 if(op.idEvento!!.equals(idEventoActual)){
-                    opiniones.add(op)
+                    VariablesCompartidas.opinionesEventoActual.add(op)
                 }
             }
         }
@@ -293,10 +295,16 @@ class DetalleEventoActivity : AppCompatActivity() {
             R.id.foto_opinion ->  cambiarFoto()
             R.id.location_opinion ->  comentarioUbi()
             R.id.confirmArrival ->  confirmAsist()
+            R.id.files ->  goToFiles()
         }
         return super.onOptionsItemSelected(item)
     }
 
+    fun goToFiles(){
+
+        var myIntent = Intent(this, OpinionesBotNavActivity::class.java)
+        startActivity(myIntent)
+    }
     //++++++++++++++++FOTO+++++++++++++++++++++++
 
     private fun savePhotoStorage(img : Bitmap){
@@ -331,7 +339,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         var filePath = myStorage.child("images").child("${id}.jpg")
 
         filePath.putFile(uri).addOnSuccessListener {
-            //saveComentarioFirebase(crearComentario(null,id,null,null))
+            saveComentarioFirebase(crearComentario(null,id,null,null))
             Toast.makeText(this,R.string.Suscesfull,Toast.LENGTH_SHORT).show()
         }.addOnFailureListener{
             Toast.makeText(this,R.string.ERROR,Toast.LENGTH_SHORT).show()

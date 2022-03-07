@@ -137,10 +137,9 @@ class AdapterRvOpiniones (
         val mon = opinion.yearOpinion
         val fechaST = "${dia}/${mon} ${hora}:${min}"
 
-        holder.txt_hora_comentario.text = (fechaST)
-        holder.txt_nombreUser_detalle.text = (opinion.userNameAutor)
-
         if(opinion.comentario != null){
+            holder.txt_hora_comentario.text = (fechaST)
+            holder.txt_nombreUser_detalle.text = (opinion.userNameAutor)
             holder.ed_txt_multiline_opinion.setText(opinion.comentario)
             if(opinion.userNameAutor.equals(VariablesCompartidas.userActual!!.userName)){
                 holder.ed_txt_multiline_opinion.setOnLongClickListener(View.OnLongClickListener {
@@ -191,41 +190,6 @@ class AdapterRvOpiniones (
          */
     }
 
-    /*
-    private fun getFotoStorage(idFoto: String):Bitmap?{
-        //val storageRef = storage.reference
-        val storageRef = Firebase.storage.reference
-        //val imagesRef = storageRef.child("/images/${idFoto}")
-        var bitmap : Bitmap? = null
-        //val ONE_MEGABYTE = (1024 * 1024).toLong()
-
-        storageRef.child("images/${idFoto}").getBytes(Long.MAX_VALUE).addOnSuccessListener {
-            bitmap = Auxiliar.getBitmap(it)
-        }.addOnFailureListener {
-            Toast.makeText(context,"Se produjo un ERROR al bajar la imagen",Toast.LENGTH_SHORT).show()
-        }
-
-        return bitmap
-    }
-
-
-
-    private fun getFoto(idFoto: String) : Bitmap?{
-        val storageRef = storage.reference
-        val imagesRef = storageRef.child("/images/${idFoto}")
-        var bitmap : Bitmap? = null
-        val ONE_MEGABYTE = (1024 * 1024).toLong()
-        imagesRef.getBytes(ONE_MEGABYTE).addOnSuccessListener{
-
-            val n = BitmapFactory.decodeByteArray(it,0,it.size)
-            Log.d("BITMAP","${bitmap}")
-        }.addOnFailureListener{
-            Toast.makeText(context, R.string.ERROR, Toast.LENGTH_SHORT).show()
-        }
-        return bitmap
-    }
-
-     */
 
     //++++++++++++++++++++ ELIMINAR ++++++++++++++++++++++++++++++++++
     private fun checkEliminar(opinion: Opinion) {

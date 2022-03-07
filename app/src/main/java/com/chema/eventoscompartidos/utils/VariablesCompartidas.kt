@@ -29,7 +29,6 @@ object VariablesCompartidas {
     var addMode : Boolean = false
     var adminLikeUserMode : Boolean = false
 
-    var usersAux: ArrayList<User> = ArrayList<User>()
     var opinionesEventoActual: ArrayList<Opinion> = ArrayList<Opinion>()
     var usuariosEventoActual: ArrayList<User> = ArrayList<User>()
     var emailUsuariosEventoActual: ArrayList<String> = ArrayList<String>()

@@ -37,7 +37,7 @@
         app:layout_constraintVertical_bias="0.049" />
 
     <ImageView
-        android:id="@+id/um_foto_comentario"
+        android:id="@+id/img_foto_comentario"
         android:layout_width="129dp"
         android:layout_height="93dp"
         app:layout_constraintBottom_toBottomOf="parent"
