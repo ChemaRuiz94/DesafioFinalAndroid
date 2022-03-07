@@ -35,6 +35,10 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".activities.MapsOpinionActivity"
+            android:exported="true"
+            android:label="@string/title_activity_maps_opinion" />
+        <activity
             android:name=".activities.MapsConfirmArrivalActivity"
             android:exported="true"
             android:label="@string/title_activity_maps_confirm_arrival" />

@@ -86,4 +86,5 @@
     <string name="title_activity_admin_nav_home">AdminNavHomeActivity</string>
     <string name="title_activity_admin_tabb">AdminTabbActivity</string>
     <string name="title_activity_maps_confirm_arrival">MapsConfirmArrivalActivity</string>
+    <string name="title_activity_maps_opinion">MapsOpinionActivity</string>
 </resources>

@@ -121,13 +121,24 @@ class DetalleEventoActivity : AppCompatActivity() {
                 //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
                 job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
             }
-            cargarRV()
+            refreshRV()
         }
         opinionesOrdenadas.clear()
         opinionesOrdenadas =  ordenarOpiniones()
         cargarRV()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        refreshRV()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshRV()
+    }
+
+    //++++++++++++++++++++++++++++++++++++++++++++++
     private fun ordenarOpiniones() : ArrayList<Opinion>{
         val opiniOrdenadas = opiniones.sortedWith(compareBy({ it.yearOpinion }, { it.mesOpinion },{it.diaOpinion}, { it.horaOpinion },{it.minOpinion}))
 
@@ -149,7 +160,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         val dia = fecha.get(Calendar.DAY_OF_MONTH)
         val mes = fecha.get(Calendar.MONTH)
         val year = fecha.get(Calendar.YEAR)
-        return Opinion(idOpin,idEventoActual,userNameAutor,coment,photo,longImport,latImport,hora,min,dia,mes,year)
+        return Opinion(idOpin,idEventoActual,userNameAutor,coment,photo,latImport,longImport,hora,min,dia,mes,year)
     }
 
 
@@ -252,8 +263,8 @@ class DetalleEventoActivity : AppCompatActivity() {
                     dc.document.get("userNameAutor").toString(),
                     coment,
                     foto,
-                    longLugarInteres,
                     latLugarInteres,
+                    longLugarInteres,
                     dc.document.get("horaOpinion").toString().toInt(),
                     dc.document.get("minOpinion").toString().toInt(),
                     dc.document.get("diaOpinion").toString().toInt(),
@@ -276,6 +287,11 @@ class DetalleEventoActivity : AppCompatActivity() {
         startActivity(asistIntent)
     }
 
+    //++++++++++++COMENTARIO UBICAICON++++++++++++++++++
+    private fun comentUbi(){
+        val asistIntent = Intent(this, MapsOpinionActivity::class.java)
+        startActivity(asistIntent)
+    }
     //++++++++++++MENU++++++++++++++++++
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.event_menu, menu)
@@ -285,13 +301,13 @@ class DetalleEventoActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.foto_opinion ->  cambiarFoto()
-            R.id.location_opinion ->  a = 2
+            R.id.location_opinion ->  comentUbi()
             R.id.confirmArrival ->  confirmAsist()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    //++++++++++++++++++++++++++++++++++++++++++
+    //++++++++++++++++FOTO+++++++++++++++++++++++
 
     private fun savePhotoStorage(img : Bitmap){
         /*
@@ -331,8 +347,6 @@ class DetalleEventoActivity : AppCompatActivity() {
             Toast.makeText(this,R.string.ERROR,Toast.LENGTH_SHORT).show()
         }
     }
-
-
 
 
     fun cambiarFoto() {

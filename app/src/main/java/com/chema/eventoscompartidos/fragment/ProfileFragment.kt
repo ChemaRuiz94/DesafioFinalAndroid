@@ -215,7 +215,7 @@ class ProfileFragment: Fragment() {
                 val p1 = pass1.text.toString()
                 val p2 = pass2.text.toString()
                 if (p1 == p2) {
-                    //usuario.passwd = p1
+                    currentUser.updatePassword(p1)
                     Toast.makeText(
                         context,
                         getString(R.string.Suscesfull),

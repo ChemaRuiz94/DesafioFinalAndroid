@@ -50,6 +50,7 @@ class AdapterRvOpiniones (
 
     private val LAYOUT_ONE = 0
     private val LAYOUT_TWO = 1
+    private val LAYOUT_THREE = 2
     private var photo : Bitmap? = null
 
     override fun getItemCount(): Int {
@@ -61,6 +62,34 @@ class AdapterRvOpiniones (
         var view: View? = null
         var viewHolder: RecyclerView.ViewHolder? = null
 
+        view = LayoutInflater.from(context).inflate(R.layout.item_opinion_comentario_layout, parent, false)
+
+        viewHolder = ViewHolderComentario(view)
+
+
+        when(viewType){
+            LAYOUT_ONE -> {
+                view = LayoutInflater.from(context).inflate(R.layout.item_opinion_comentario_layout, parent, false)
+
+                viewHolder = ViewHolderComentario(view)
+                return viewHolder
+            }
+            LAYOUT_TWO -> {
+                view = LayoutInflater.from(context).inflate(R.layout.item_opinon_foto_layout, parent, false)
+
+                viewHolder = ViewHolderComentario(view)
+                return viewHolder
+            }
+            LAYOUT_THREE -> {
+                view = LayoutInflater.from(context).inflate(R.layout.item_opinon_ubicacion_layout, parent, false)
+
+                viewHolder = ViewHolderUbicacion(view)
+                return viewHolder
+            }
+        }
+
+
+        /*
         if (viewType === LAYOUT_ONE) {
             view = LayoutInflater.from(context).inflate(R.layout.item_opinion_comentario_layout, parent, false)
 
@@ -73,12 +102,37 @@ class AdapterRvOpiniones (
             viewHolder = ViewHolderFoto(view)
         }
 
+
+         */
         return viewHolder
 
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == 0) LAYOUT_ONE else LAYOUT_TWO
+        //return if (position == 0) LAYOUT_ONE else LAYOUT_TWO
+        if(position == 0){
+            return LAYOUT_ONE
+        }else if(position == 1){
+            return LAYOUT_TWO
+        }else{
+            return LAYOUT_THREE
+        }
+        /*
+        var lay = LAYOUT_ONE
+        when(position){
+            0 -> {
+                lay =  LAYOUT_ONE
+            }
+            1 -> {
+                lay = LAYOUT_TWO
+            }
+            2 -> {
+                lay = LAYOUT_THREE
+            }
+        }
+        return lay
+
+         */
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -94,6 +148,44 @@ class AdapterRvOpiniones (
         val mon = opinion.yearOpinion
         val fechaST = "${dia}/${mon} ${hora}:${min}"
 
+
+        when(holder.itemViewType){
+            LAYOUT_ONE -> {
+                var viewHolderComent = holder as ViewHolderComentario
+
+                viewHolderComent.txt_hora_comentario.text = (fechaST)
+                viewHolderComent.txt_nombreUser_detalle.text = (autor)
+
+                viewHolderComent.ed_txt_multiline_opinion.setText(opinion.comentario)
+                if(opinion.userNameAutor.equals(VariablesCompartidas.userActual!!.userName)){
+                    viewHolderComent.ed_txt_multiline_opinion.setOnLongClickListener(View.OnLongClickListener {
+                        checkEliminar(opinion)
+                        false
+                    })
+                }
+            }
+            LAYOUT_TWO -> {
+                if(opinion.foto != null){
+                    photo = getFotoStorage(opinion.foto!!)
+
+                }
+
+                var viewHolderFoto= holder as ViewHolderFoto
+
+                viewHolderFoto.txt_hora_comentario.text = (fechaST)
+                viewHolderFoto.txt_nombreUser_detalle.text = (autor)
+
+                viewHolderFoto.img_opinion.setImageBitmap(photo)
+            }
+            LAYOUT_THREE -> {
+                var viewHolderUbicacion = holder as ViewHolderUbicacion
+
+                viewHolderUbicacion.txt_hora_comentario.text = (fechaST)
+                viewHolderUbicacion.txt_nombreUser_detalle.text = (autor)
+            }
+        }
+
+/*
         if(holder.itemViewType == LAYOUT_ONE){
 
             var viewHolderComent = holder as ViewHolderComentario
@@ -123,7 +215,14 @@ class AdapterRvOpiniones (
             viewHolderFoto.img_opinion.setImageBitmap(photo)
         }else{
 
+            var viewHolderUbicacion = holder as ViewHolderUbicacion
+
+            viewHolderUbicacion.txt_hora_comentario.text = (fechaST)
+            viewHolderUbicacion.txt_nombreUser_detalle.text = (autor)
         }
+
+ */
+
     }
 
     private fun getFotoStorage(idFoto: String):Bitmap?{
@@ -249,6 +348,14 @@ class AdapterRvOpiniones (
         val img_opinion = view.findViewById<ImageView>(R.id.um_foto_comentario)
         val txt_hora_comentario = view.findViewById<TextView>(R.id.txt_hora_comentario_foto)
         val txt_nombreUser_detalle = view.findViewById<TextView>(R.id.txt_nombreUser_detalle_foto)
+
+    }
+
+    class ViewHolderUbicacion(view: View) : RecyclerView.ViewHolder(view) {
+
+        val frm_map_opinion = view.findViewById<FrameLayout>(R.id.frm_map_opinion)
+        val txt_hora_comentario = view.findViewById<TextView>(R.id.txt_hora_comentario_ubicacion)
+        val txt_nombreUser_detalle = view.findViewById<TextView>(R.id.txt_nombreUser_detalle_ubicacion)
 
     }
 }

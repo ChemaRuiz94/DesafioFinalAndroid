@@ -1,10 +1,12 @@
 package com.chema.eventoscompartidos.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chema.eventoscompartidos.R
@@ -16,6 +18,7 @@ import com.chema.eventoscompartidos.rv.AdapterRvUsers
 import com.chema.eventoscompartidos.utils.Constantes
 import com.chema.eventoscompartidos.utils.DatePickerFragment
 import com.chema.eventoscompartidos.utils.TimePickerFragment
+import com.chema.eventoscompartidos.utils.VariablesCompartidas
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -116,6 +119,17 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
             newFragment.show(supportFragmentManager, "timePicker")
         }
 
+        btn_change_location_edit.setOnClickListener{
+            val mapIntent = Intent(this, MapsActivity::class.java).apply {
+                //putExtra("email",email)
+            }
+            startActivityForResult(mapIntent,1)
+        }
+
+        flt_btn_edit_event.setOnClickListener{
+            guardar_evento()
+        }
+
         cargarUserAsist()
         cargarDatosEvento()
         cargarRV()
@@ -140,6 +154,41 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
+    //++++++++++++++++++++++++++++++++++++++++++++++
+    private fun guardar_evento(){
+        val idEv = evento!!.idEvento
+        val listaOpiniones: ArrayList<Opinion>? = evento!!.listaOpiniones
+        val listaUsers: ArrayList<User>? = evento!!.asistentes
+        val listaEmailUsers: ArrayList<String>? = evento!!.emailAsistentes
+        val idAsistentesHora = evento!!.idAsistentesHora
+
+        var evento = hashMapOf(
+
+            "idEvento" to idEv,
+            "nombreEvento" to ed_txt_titulo_evento_edit.text.toString(),
+            "horaEvento" to VariablesCompartidas.horaEventoActual,
+            "minEvento" to VariablesCompartidas.minutoEventoActual,
+            "diaEvento" to VariablesCompartidas.diaEventoActual,
+            "mesEvento" to VariablesCompartidas.mesEventoActual,
+            "yearEvento" to VariablesCompartidas.yearEventoActual,
+            "latUbi" to VariablesCompartidas.latEventoActual,
+            "lonUbi" to VariablesCompartidas.lonEventoActual,
+            "asistentes" to listaUsers,
+            "emailAsistentes" to listaEmailUsers,
+            "idAsistentesHora" to idAsistentesHora,
+            "listaOpiniones" to listaOpiniones,
+
+            )
+
+        db.collection("${Constantes.collectionEvents}")
+            .document(idEv) //Será la clave del documento.
+            .set(evento).addOnSuccessListener {
+                Toast.makeText(this, getString(R.string.Suscesfull), Toast.LENGTH_SHORT).show()
+                finish()
+            }.addOnFailureListener{
+                Toast.makeText(this, getString(R.string.ocurridoErrorAutenticacion), Toast.LENGTH_SHORT).show()
+            }
+    }
 
     //+++++++++++++++ASISTENTES+++++++++++++++++++
     private fun cargarUserAsist() {
@@ -246,6 +295,21 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
                 )
                 usuarios.add(user)
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(VariablesCompartidas.latEventoActual != null && VariablesCompartidas.lonEventoActual != null){
+            ubicacionActual = LatLng(VariablesCompartidas.latEventoActual.toString().toDouble(),VariablesCompartidas.lonEventoActual.toString().toDouble())
+            ed_txt_ubicacion_edit.setText("${ubicacionActual}")
+
+            ubicacionCambiada = true
+
+            val ubi = LatLng(VariablesCompartidas.latEventoActual.toString().toDouble(), VariablesCompartidas.lonEventoActual.toString().toDouble())
+            mMap?.addMarker(MarkerOptions().position(ubi).title("${ed_txt_titulo_evento_edit.text}"))
+            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubi,15f))
         }
     }
 }

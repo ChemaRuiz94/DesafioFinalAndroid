@@ -175,7 +175,7 @@ class AdapterRvEventos(
     private fun chekcEditEvent(evento: Evento){
         AlertDialog.Builder(context).setTitle(R.string.editEvent)
             .setPositiveButton(R.string.edit) { view, _ ->
-
+                VariablesCompartidas.eventoActual = evento
                 val homeIntent = Intent(context, EditEventActivity::class.java).apply {
                     putExtra("idEvento",evento.idEvento.toString())
                 }
