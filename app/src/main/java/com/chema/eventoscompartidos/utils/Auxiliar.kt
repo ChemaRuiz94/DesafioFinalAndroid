@@ -32,6 +32,7 @@ object Auxiliar {
         return null
     }
 
+
     fun ImageToString(bitmap: Bitmap):String?{
         val baos = ByteArrayOutputStream()
         //val bitmap : Bitmap = imgUsuarioPerfil.drawToBitmap()
@@ -50,4 +51,9 @@ object Auxiliar {
             null
         }
     }
+
+    fun getBitmap(image: ByteArray):Bitmap?{
+        return BitmapFactory.decodeByteArray(image,0,image.size)
+    }
+
 }

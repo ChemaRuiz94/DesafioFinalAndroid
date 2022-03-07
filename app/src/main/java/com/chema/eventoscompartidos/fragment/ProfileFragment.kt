@@ -47,7 +47,6 @@ import java.util.*
 class ProfileFragment: Fragment() {
 
     private val db = FirebaseFirestore.getInstance()
-    val storage = Firebase.storage("gs://eventoscompartidos-43253.appspot.com")
 
     private lateinit var auth: FirebaseAuth
     private lateinit var currentUser: FirebaseUser
@@ -151,23 +150,7 @@ class ProfileFragment: Fragment() {
 
     }
 
-//    private fun savePhotoStorage(img : Bitmap){
-//        val storageRef = storage.reference
-//        val photo = "${UUID.randomUUID()}"
-//        val imagesRef = storageRef.child("images/${photo}.jpg")
-//        val baos = ByteArrayOutputStream()
-//        img.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-//        val data = baos.toByteArray()
-//
-//        var uploadTask = imagesRef.putBytes(data)
-//        uploadTask.addOnFailureListener {
-//            // Handle unsuccessful uploads
-//        }.addOnSuccessListener { taskSnapshot ->
-//            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-//            // ...
-//        }
-//
-//    }
+
 
     fun editar(){
 

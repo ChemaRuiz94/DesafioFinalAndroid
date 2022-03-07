@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -37,11 +38,15 @@ import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 import java.lang.Exception
@@ -52,6 +57,8 @@ class DetalleEventoActivity : AppCompatActivity() {
     private var a = 0
 
     private val db = Firebase.firestore
+    private lateinit var storage : FirebaseStorage
+    private lateinit var myStorage : StorageReference
 
     private var idEventoActual : String? = null
     private lateinit var opiniones : ArrayList<Opinion>
@@ -62,6 +69,7 @@ class DetalleEventoActivity : AppCompatActivity() {
     private lateinit var miAdapter: AdapterRvOpiniones
     private lateinit var ed_txt_comentario_detalle : EditText
     private lateinit var flt_btn_sendComentario : FloatingActionButton
+    private lateinit var fl_btn_refresh_opinion : FloatingActionButton
     private lateinit var txt_nombreEvento_detalle : TextView
 
     private var photo: Bitmap? = null
@@ -70,7 +78,8 @@ class DetalleEventoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detalle_evento)
 
-
+        storage = Firebase.storage("gs://eventoscompartidos-43253.appspot.com")
+        myStorage = FirebaseStorage.getInstance().getReference()
         val bundle:Bundle? = intent.extras
         idEventoActual = (bundle?.getString("idEventoActual"))
         opiniones = ArrayList<Opinion>()
@@ -88,6 +97,7 @@ class DetalleEventoActivity : AppCompatActivity() {
 
         ed_txt_comentario_detalle = findViewById(R.id.ed_txt_comentario_detalle)
         flt_btn_sendComentario = findViewById(R.id.flt_btn_sendComentario)
+        fl_btn_refresh_opinion = findViewById(R.id.fl_btn_refresh_opinion)
         txt_nombreEvento_detalle = findViewById(R.id.txt_nombreEvento_detalle)
         txt_nombreEvento_detalle.setText(VariablesCompartidas.eventoActual!!.nombreEvento)
 
@@ -101,6 +111,17 @@ class DetalleEventoActivity : AppCompatActivity() {
                 saveComentarioFirebase(crearComentario(text,null,null,null))
                 refreshRV()
             }
+        }
+        fl_btn_refresh_opinion.setOnClickListener{
+            runBlocking {
+                val job : Job = launch(context = Dispatchers.Default) {
+                    val datos : QuerySnapshot = getDataFromFireStore() as QuerySnapshot //Obtenermos la colección
+                    obtenerDatos(datos as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
+                }
+                //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
+                job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
+            }
+            cargarRV()
         }
         opinionesOrdenadas.clear()
         opinionesOrdenadas =  ordenarOpiniones()
@@ -131,16 +152,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         return Opinion(idOpin,idEventoActual,userNameAutor,coment,photo,longImport,latImport,hora,min,dia,mes,year)
     }
 
-    fun crearOpinionFoto(){
-        val idOpin : String = UUID.randomUUID().toString()
-        val userNameAutor : String = VariablesCompartidas.userActual!!.userName
-        val fecha = Calendar.getInstance()
-        val hora = fecha.get(Calendar.HOUR)
-        val min = fecha.get(Calendar.MINUTE)
-        val dia = fecha.get(Calendar.DAY_OF_MONTH)
-        val mes = fecha.get(Calendar.MONTH)
-        val year = fecha.get(Calendar.YEAR)
-    }
+
 
     fun saveComentarioFirebase(opinion: Opinion){
 
@@ -151,7 +163,7 @@ class DetalleEventoActivity : AppCompatActivity() {
                 //Toast.makeText(this, getString(R.string.Suscesfull), Toast.LENGTH_SHORT).show()
                 ed_txt_comentario_detalle.setText("")
             }.addOnFailureListener{
-                Toast.makeText(this, getString(R.string.ocurridoErrorAutenticacion), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.ERROR), Toast.LENGTH_SHORT).show()
             }
 
         var ev = VariablesCompartidas.eventoActual as Evento
@@ -165,7 +177,7 @@ class DetalleEventoActivity : AppCompatActivity() {
                 ed_txt_comentario_detalle.setText("")
             }
             .addOnFailureListener{
-                Toast.makeText(this, getString(R.string.ocurridoErrorAutenticacion), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.ERROR), Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -175,8 +187,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         rv = findViewById(R.id.rv_opiniones_detalle)
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
-        miAdapter = AdapterRvOpiniones(this, opinionesOrdenadas)
-        //miAdapter.onCreateViewHolder(rv,2)
+        miAdapter = AdapterRvOpiniones(this, opinionesOrdenadas, storage)
         rv.adapter = miAdapter
     }
 
@@ -280,9 +291,49 @@ class DetalleEventoActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun addFotoComent(){
+    //++++++++++++++++++++++++++++++++++++++++++
 
+    private fun savePhotoStorage(img : Bitmap){
+        /*
+        val storageRef = storage.reference
+        val photo = UUID.randomUUID().toString()
+        val imagesRef = storageRef.child("/images/${photo}.jpg")
+        val baos = ByteArrayOutputStream()
+        img.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
+
+        var uploadTask = imagesRef.putBytes(data)
+        uploadTask.addOnFailureListener {
+            Toast.makeText(this,R.string.ERROR ,Toast.LENGTH_SHORT).show()
+        }.addOnSuccessListener { taskSnapshot ->
+            saveComentarioFirebase(crearComentario(null,photo,null,null))
+        }
+
+         */
+
+        val bytes = ByteArrayOutputStream()
+        img.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path = MediaStore.Images.Media.insertImage(
+            this.getContentResolver(),
+            img,
+            "Title",
+            null
+        )
+        val uri : Uri =  Uri.parse(path)
+        val id = UUID.randomUUID().toString()
+
+        var filePath = myStorage.child("images").child("${id}.jpg")
+
+        filePath.putFile(uri).addOnSuccessListener {
+            saveComentarioFirebase(crearComentario(null,id,null,null))
+            Toast.makeText(this,R.string.Suscesfull,Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener{
+            Toast.makeText(this,R.string.ERROR,Toast.LENGTH_SHORT).show()
+        }
     }
+
+
+
 
     fun cambiarFoto() {
         AlertDialog.Builder(this)
@@ -333,7 +384,7 @@ class DetalleEventoActivity : AppCompatActivity() {
 
                 if (resultCode == Activity.RESULT_OK) {
                     photo = data?.extras?.get("data") as Bitmap
-                    saveComentarioFirebase(crearComentario(null,Auxiliar.ImageToString(photo!!),null,null))
+                    savePhotoStorage(photo!!)
                     refreshRV()
                 }
             }
@@ -355,7 +406,7 @@ class DetalleEventoActivity : AppCompatActivity() {
                         }
                         val bmp = BitmapFactory.decodeStream(imageStream)
                         photo = Bitmap.createScaledBitmap(bmp, 200, 300, true)
-                        saveComentarioFirebase(crearComentario(null,Auxiliar.ImageToString(photo!!),null,null))
+                        savePhotoStorage(photo!!)
                         refreshRV()
                     }
                 }

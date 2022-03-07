@@ -20,25 +20,37 @@ import com.chema.eventoscompartidos.utils.VariablesCompartidas
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
+import androidx.annotation.NonNull
 
+import com.google.android.gms.tasks.OnFailureListener
 
+import android.util.DisplayMetrics
+
+import android.graphics.BitmapFactory
+import com.google.firebase.storage.FirebaseStorage
 
 
 class AdapterRvOpiniones (
     private val context: AppCompatActivity,
-    private val opiniones: ArrayList<Opinion>
+    private val opiniones: ArrayList<Opinion>,
+    private val storage : FirebaseStorage
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val LAYOUT_ONE = 0
     private val LAYOUT_TWO = 1
+    private var photo : Bitmap? = null
 
     override fun getItemCount(): Int {
         return opiniones.size
@@ -62,13 +74,7 @@ class AdapterRvOpiniones (
         }
 
         return viewHolder
-        /*
-        return AdapterRvOpiniones.ViewHolder(
 
-            LayoutInflater.from(context).inflate(R.layout.item_opinion_comentario_layout, parent, false)
-        )
-
-         */
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -104,43 +110,52 @@ class AdapterRvOpiniones (
             }
 
         }else if(holder.itemViewType == LAYOUT_TWO){
+            if(opinion.foto != null){
+                photo = getFotoStorage(opinion.foto!!)
+
+            }
 
             var viewHolderFoto= holder as ViewHolderFoto
 
             viewHolderFoto.txt_hora_comentario.text = (fechaST)
             viewHolderFoto.txt_nombreUser_detalle.text = (autor)
 
-            viewHolderFoto.img_opinion.setImageBitmap(Auxiliar.StringToBitMap(opinion.foto))
+            viewHolderFoto.img_opinion.setImageBitmap(photo)
         }else{
 
         }
+    }
 
-/*
-        //AQUI OCULTAMOS UNOS COMPONENTES U OTROS SEGUN EL COMENTARIO
-        if(opinion.comentario != null){
-            //holder.frm_map_opinion.isEnabled = false
-            holder.frm_map_opinion.isVisible = false
-            //holder.img_opinion.isEnabled = false
-            holder.img_opinion.isVisible = false
-            holder.ed_txt_multiline_opinion.setText(opinion.comentario)
-        }else if(opinion.foto != null){
-            //holder.frm_map_opinion.isEnabled = false
-            holder.frm_map_opinion.isVisible = false
-            //holder.ed_txt_multiline_opinion.isEnabled = false
-            holder.ed_txt_multiline_opinion.isVisible = false
-            val imgSt = opinion.foto
-            val img : Bitmap? = Auxiliar.StringToBitMap(imgSt)
-            holder.img_opinion.setImageBitmap(img)
-        }else if (opinion.latLugarInteres != null && opinion.longLugarInteres != null){
-            //holder.img_opinion.isEnabled = false
-            holder.img_opinion.isVisible = false
-            //holder.ed_txt_multiline_opinion.isEnabled = false
-            holder.ed_txt_multiline_opinion.isVisible = false
+    private fun getFotoStorage(idFoto: String):Bitmap?{
+        //val storageRef = storage.reference
+        val storageRef = Firebase.storage.reference
+        //val imagesRef = storageRef.child("/images/${idFoto}")
+        var bitmap : Bitmap? = null
+        //val ONE_MEGABYTE = (1024 * 1024).toLong()
 
+        storageRef.child("images/${idFoto}").getBytes(Long.MAX_VALUE).addOnSuccessListener {
+            bitmap = Auxiliar.getBitmap(it)
+        }.addOnFailureListener {
+            Toast.makeText(context,"Se produjo un ERROR al bajar la imagen",Toast.LENGTH_SHORT).show()
         }
 
- */
+        return bitmap
+    }
 
+
+    private fun getFoto(idFoto: String) : Bitmap?{
+        val storageRef = storage.reference
+        val imagesRef = storageRef.child("/images/${idFoto}")
+        var bitmap : Bitmap? = null
+        val ONE_MEGABYTE = (1024 * 1024).toLong()
+        imagesRef.getBytes(ONE_MEGABYTE).addOnSuccessListener{
+
+            val n = BitmapFactory.decodeByteArray(it,0,it.size)
+            Log.d("BITMAP","${bitmap}")
+        }.addOnFailureListener{
+            Toast.makeText(context, R.string.ERROR, Toast.LENGTH_SHORT).show()
+        }
+        return bitmap
     }
 
     //++++++++++++++++++++ ELIMINAR ++++++++++++++++++++++++++++++++++
@@ -149,7 +164,6 @@ class AdapterRvOpiniones (
             .setPositiveButton(R.string.delete) { view, _ ->
 
                 val db = FirebaseFirestore.getInstance()
-                Log.d("PRUEBA1", "pre runBlock1")
                 checkEliminarOpinionesDelEvento(opinion)
                 db.collection("${Constantes.collectionOpiniones}").document("${opinion.idOpinion}").delete()
 
@@ -174,7 +188,6 @@ class AdapterRvOpiniones (
 
     suspend fun getDataFromFireStore()  : QuerySnapshot? {
 
-        Log.d("PRUEBA1", "post runBlock")
         val db = FirebaseFirestore.getInstance()
         return try{
             val data = db.collection("${Constantes.collectionEvents}")
