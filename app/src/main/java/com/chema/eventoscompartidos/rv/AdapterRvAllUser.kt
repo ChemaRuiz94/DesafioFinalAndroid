@@ -67,6 +67,7 @@ class AdapterRvAllUser (
             holder.switchActivated.setText(R.string.Disabled)
         }
 
+
         holder.itemView.setOnLongClickListener(View.OnLongClickListener {
             checkEliminar(usuario)
             false
@@ -179,47 +180,6 @@ class AdapterRvAllUser (
                     ev.asistentes!!.remove(user)
                     VariablesCompartidas.eventosUser.add(ev)
                 }
-
-                /*
-                val idOpi = dc.document.get("idOpinion").toString()
-                var coment : String? = null
-                if(dc.document.get("comentario") != null){
-                    coment = dc.document.get("comentario").toString()
-                }
-                var foto : String? = null
-                if(dc.document.get("foto") != null){
-                    foto = dc.document.get("foto").toString()
-                }
-
-                var longLugarInteres : String? = null
-                if(dc.document.get("longLugarInteres") != null){
-                    longLugarInteres = dc.document.get("longLugarInteres").toString()
-                }
-                var latLugarInteres : String? = null
-                if(dc.document.get("latLugarInteres") != null){
-                    latLugarInteres = dc.document.get("latLugarInteres").toString()
-                }
-
-
-
-                var op = Opinion(
-                    idOpi,
-                    dc.document.get("idEvento").toString(),
-                    dc.document.get("userNameAutor").toString(),
-                    coment,
-                    foto,
-                    longLugarInteres,
-                    latLugarInteres,
-                    dc.document.get("horaOpinion").toString().toInt(),
-                    dc.document.get("minOpinion").toString().toInt(),
-                    dc.document.get("diaOpinion").toString().toInt(),
-                    dc.document.get("mesOpinion").toString().toInt(),
-                    dc.document.get("yearOpinion").toString().toInt()
-                )
-                Log.d("CHEMA2_op","${op}")
-                VariablesCompartidas.opinionesEventoActual.add(op)
-
-                 */
             }
         }
         for (even in VariablesCompartidas.eventosUser){

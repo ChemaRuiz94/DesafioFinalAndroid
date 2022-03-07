@@ -69,7 +69,6 @@ class DetalleEventoActivity : AppCompatActivity() {
     private lateinit var miAdapter: AdapterRvOpiniones
     private lateinit var ed_txt_comentario_detalle : EditText
     private lateinit var flt_btn_sendComentario : FloatingActionButton
-    private lateinit var fl_btn_refresh_opinion : FloatingActionButton
     private lateinit var txt_nombreEvento_detalle : TextView
 
     private var photo: Bitmap? = null
@@ -97,7 +96,6 @@ class DetalleEventoActivity : AppCompatActivity() {
 
         ed_txt_comentario_detalle = findViewById(R.id.ed_txt_comentario_detalle)
         flt_btn_sendComentario = findViewById(R.id.flt_btn_sendComentario)
-        fl_btn_refresh_opinion = findViewById(R.id.fl_btn_refresh_opinion)
         txt_nombreEvento_detalle = findViewById(R.id.txt_nombreEvento_detalle)
         txt_nombreEvento_detalle.setText(VariablesCompartidas.eventoActual!!.nombreEvento)
 
@@ -112,17 +110,7 @@ class DetalleEventoActivity : AppCompatActivity() {
                 refreshRV()
             }
         }
-        fl_btn_refresh_opinion.setOnClickListener{
-            runBlocking {
-                val job : Job = launch(context = Dispatchers.Default) {
-                    val datos : QuerySnapshot = getDataFromFireStore() as QuerySnapshot //Obtenermos la colección
-                    obtenerDatos(datos as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
-                }
-                //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
-                job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
-            }
-            refreshRV()
-        }
+
         opinionesOrdenadas.clear()
         opinionesOrdenadas =  ordenarOpiniones()
         cargarRV()
@@ -140,7 +128,7 @@ class DetalleEventoActivity : AppCompatActivity() {
 
     //++++++++++++++++++++++++++++++++++++++++++++++
     private fun ordenarOpiniones() : ArrayList<Opinion>{
-        val opiniOrdenadas = opiniones.sortedWith(compareBy({ it.yearOpinion }, { it.mesOpinion },{it.diaOpinion}, { it.horaOpinion },{it.minOpinion}))
+        val opiniOrdenadas = opiniones.sortedWith(compareBy({ it.yearOpinion }, { it.mesOpinion },{it.diaOpinion},{ it.horaOpinion },{it.minOpinion},{it.segOpinion}))
 
 
         for (opi in opiniOrdenadas){
@@ -157,10 +145,11 @@ class DetalleEventoActivity : AppCompatActivity() {
         val fecha = Calendar.getInstance()
         val hora = fecha.get(Calendar.HOUR)
         val min = fecha.get(Calendar.MINUTE)
+        val seg = fecha.get(Calendar.SECOND)
         val dia = fecha.get(Calendar.DAY_OF_MONTH)
         val mes = fecha.get(Calendar.MONTH)
         val year = fecha.get(Calendar.YEAR)
-        return Opinion(idOpin,idEventoActual,userNameAutor,coment,photo,latImport,longImport,hora,min,dia,mes,year)
+        return Opinion(idOpin,idEventoActual,userNameAutor,coment,photo,latImport,longImport,hora,min,seg,dia,mes,year)
     }
 
 
@@ -198,7 +187,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         rv = findViewById(R.id.rv_opiniones_detalle)
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
-        miAdapter = AdapterRvOpiniones(this, opinionesOrdenadas, storage)
+        miAdapter = AdapterRvOpiniones(this, opinionesOrdenadas)
         rv.adapter = miAdapter
     }
 
@@ -267,6 +256,7 @@ class DetalleEventoActivity : AppCompatActivity() {
                     longLugarInteres,
                     dc.document.get("horaOpinion").toString().toInt(),
                     dc.document.get("minOpinion").toString().toInt(),
+                    dc.document.get("segOpinion").toString().toInt(),
                     dc.document.get("diaOpinion").toString().toInt(),
                     dc.document.get("mesOpinion").toString().toInt(),
                     dc.document.get("yearOpinion").toString().toInt()
@@ -288,7 +278,7 @@ class DetalleEventoActivity : AppCompatActivity() {
     }
 
     //++++++++++++COMENTARIO UBICAICON++++++++++++++++++
-    private fun comentUbi(){
+    private fun comentarioUbi(){
         val asistIntent = Intent(this, MapsOpinionActivity::class.java)
         startActivity(asistIntent)
     }
@@ -301,7 +291,7 @@ class DetalleEventoActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.foto_opinion ->  cambiarFoto()
-            R.id.location_opinion ->  comentUbi()
+            R.id.location_opinion ->  comentarioUbi()
             R.id.confirmArrival ->  confirmAsist()
         }
         return super.onOptionsItemSelected(item)
@@ -341,7 +331,7 @@ class DetalleEventoActivity : AppCompatActivity() {
         var filePath = myStorage.child("images").child("${id}.jpg")
 
         filePath.putFile(uri).addOnSuccessListener {
-            saveComentarioFirebase(crearComentario(null,id,null,null))
+            //saveComentarioFirebase(crearComentario(null,id,null,null))
             Toast.makeText(this,R.string.Suscesfull,Toast.LENGTH_SHORT).show()
         }.addOnFailureListener{
             Toast.makeText(this,R.string.ERROR,Toast.LENGTH_SHORT).show()
@@ -404,7 +394,7 @@ class DetalleEventoActivity : AppCompatActivity() {
             }
 
             Constantes.CODE_GALLERY -> {
-                if (resultCode === Activity.RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK) {
                     val selectedImage = data?.data
                     val selectedPath: String? = selectedImage?.path
                     if (selectedPath != null) {

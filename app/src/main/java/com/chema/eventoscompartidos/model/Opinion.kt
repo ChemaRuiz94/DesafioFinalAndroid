@@ -13,6 +13,7 @@ data class Opinion(
     var lonLugarInteres: String?,
     var horaOpinion: Int = Calendar.HOUR,
     var minOpinion: Int = Calendar.MINUTE,
+    var segOpinion: Int = Calendar.SECOND,
     var diaOpinion: Int = Calendar.DAY_OF_MONTH,
     var mesOpinion: Int = Calendar.MONTH,
     var yearOpinion: Int = Calendar.YEAR,

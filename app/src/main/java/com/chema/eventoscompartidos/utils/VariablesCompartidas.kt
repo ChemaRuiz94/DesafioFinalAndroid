@@ -26,6 +26,7 @@ object VariablesCompartidas {
     var rolUsuarioActual: String? = null
 
     var adminMode : Boolean = false
+    var addMode : Boolean = false
     var adminLikeUserMode : Boolean = false
 
     var usersAux: ArrayList<User> = ArrayList<User>()

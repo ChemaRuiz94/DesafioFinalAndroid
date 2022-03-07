@@ -21,6 +21,8 @@
     <string name="deleteThisEvent">Delete this Event?</string>
     <string name="deleteThisOpinion">Delete this Coment?</string>
     <string name="deleteThisUser">Delete this User?</string>
+    <string name="kickThisUser">Kick  this User?</string>
+    <string name="addUser">Add User?</string>
     <string name="ocurridoErrorAutenticacion">Se ha producido un error autenticando al usuairo</string>
     <string name="SignUpSuscesfull">SignUp Suscesfull</string>
     <string name="Suscesfull">Suscesfull</string>
@@ -61,6 +63,7 @@
     <string name="addPhoto">Add Photo</string>
     <string name="addLocation">Add Location</string>
     <string name="confirmArrival">Confirm Arrival</string>
+    <string name="confirmSelection">Confirm Selection</string>
 
 
     <string name="satellite_mode">Satellite Mode</string>

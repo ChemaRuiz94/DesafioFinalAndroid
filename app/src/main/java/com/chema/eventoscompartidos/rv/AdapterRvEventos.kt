@@ -85,8 +85,8 @@ class AdapterRvEventos(
             }
         }else if (!allEvents){
             holder.itemView.setOnClickListener{
+                VariablesCompartidas.eventoActual = evento
                 val homeIntent = Intent(context, DetalleEventoActivity::class.java).apply {
-                    VariablesCompartidas.eventoActual = evento
                     putExtra("idEventoActual",evento.idEvento)
                 }
                 context.startActivity(homeIntent)

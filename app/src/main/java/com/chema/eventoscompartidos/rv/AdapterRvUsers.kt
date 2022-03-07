@@ -1,15 +1,20 @@
 package com.chema.eventoscompartidos.rv
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.chema.eventoscompartidos.R
 import com.chema.eventoscompartidos.model.User
+import com.chema.eventoscompartidos.utils.Constantes
 import com.chema.eventoscompartidos.utils.VariablesCompartidas
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AdapterRvUsers (
     private val context: AppCompatActivity,
@@ -33,26 +38,66 @@ class AdapterRvUsers (
         var usuario: User = usuarios[position]
         holder.nombre.text = usuario.userName
 
-        if(editMode){
-            holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_yes)
-            holder.txt_asiste.text = ""
+        if(VariablesCompartidas.addMode){
+            if(!VariablesCompartidas.eventoActual!!.emailAsistentes!!.contains(usuario.email)){
+                holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_no)
+                holder.txt_asiste.text = "No asiste"
+
+            }else{
+                holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_yes)
+                holder.txt_asiste.text = "Asiste"
+            }
+
+            holder.img_correcto.setOnClickListener {
+                change_tick_add_mode(holder,usuario)
+            }
+
         }else{
-            holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_no)
-            holder.nombre.text = usuario.userName
+            if(editMode){
+                holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_yes)
+                holder.txt_asiste.text = ""
 
-            checkAsist(holder,usuario)
+                holder.itemView.setOnClickListener{
+                    expulsarDelEvento(usuario)
+                }
+            }else{
+                holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_no)
+                holder.nombre.text = usuario.userName
 
-            holder.itemView.setOnClickListener {
-                change_tick(holder,position)
-                //Toast.makeText(context, "${usuario.userName} añadido", Toast.LENGTH_SHORT).show()
+                checkAsist(holder,usuario)
+
+                holder.itemView.setOnClickListener {
+                    change_tick(holder,position)
+                }
             }
         }
-
-
-
     }
 
-    fun checkAsist(holder: ViewHolder,usuario: User){
+
+
+    //+++++++++++++++++++++++++++++++++
+    @SuppressLint("NotifyDataSetChanged")
+    private fun expulsarDelEvento(usuario: User) {
+        AlertDialog.Builder(context).setTitle(R.string.kickThisUser)
+            .setPositiveButton(R.string.aceptar) { view, _ ->
+
+                VariablesCompartidas.eventoActual!!.emailAsistentes!!.remove(usuario.email)
+                VariablesCompartidas.eventoActual!!.asistentes!!.remove(usuario)
+                val ev = VariablesCompartidas.eventoActual!!
+                val db = FirebaseFirestore.getInstance()
+                db.collection("${Constantes.collectionEvents}")
+                    .document("${ev.idEvento}")
+                    .set(ev)
+
+                Toast.makeText(context, R.string.Suscesfull, Toast.LENGTH_SHORT).show()
+                view.dismiss()
+            }.setNegativeButton(R.string.cancelar) { view, _ ->//cancela
+                view.dismiss()
+            }.create().show()
+        notifyDataSetChanged()
+    }
+
+    private fun checkAsist(holder: ViewHolder,usuario: User){
         if (VariablesCompartidas.emailUsuariosEventoActual.contains(usuario.email)){
             holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_yes)
             holder.txt_asiste.text = "Asiste"
@@ -63,7 +108,7 @@ class AdapterRvUsers (
         }
     }
 
-    fun change_tick(holder: ViewHolder, position: Int){
+    private fun change_tick(holder: ViewHolder, position: Int){
         if (holder.txt_asiste.text.equals("Asiste")){
             holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_no)
             holder.txt_asiste.text = "No asiste"
@@ -74,6 +119,21 @@ class AdapterRvUsers (
             holder.txt_asiste.text = "Asiste"
             VariablesCompartidas.emailUsuariosEventoActual.add(usuarios[position].email)
             VariablesCompartidas.usuariosEventoActual.add(usuarios[position])
+
+        }
+    }
+
+    private fun change_tick_add_mode(holder: ViewHolder, usuario: User){
+        if (holder.txt_asiste.text.equals("Asiste")){
+            holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_no)
+            holder.txt_asiste.text = "No asiste"
+            VariablesCompartidas.eventoActual!!.emailAsistentes!!.remove(usuario.email)
+            VariablesCompartidas.eventoActual!!.asistentes!!.remove(usuario)
+        }else{
+            holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_yes)
+            holder.txt_asiste.text = "Asiste"
+            VariablesCompartidas.eventoActual!!.emailAsistentes!!.add(usuario.email)
+            VariablesCompartidas.eventoActual!!.asistentes!!.add(usuario)
 
         }
     }

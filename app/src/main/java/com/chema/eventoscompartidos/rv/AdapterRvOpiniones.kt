@@ -44,21 +44,24 @@ import com.google.firebase.storage.FirebaseStorage
 
 class AdapterRvOpiniones (
     private val context: AppCompatActivity,
-    private val opiniones: ArrayList<Opinion>,
-    private val storage : FirebaseStorage
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val opiniones: ArrayList<Opinion>
+) : RecyclerView.Adapter<AdapterRvOpiniones.ViewHolder>() {
 
+    /*
     private val LAYOUT_ONE = 0
     private val LAYOUT_TWO = 1
     private val LAYOUT_THREE = 2
     private var photo : Bitmap? = null
 
+
+     */
     override fun getItemCount(): Int {
         return opiniones.size
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterRvOpiniones.ViewHolder {
+/*
+//PARA INFLAR TRES LAYOUTS DIFERENTES EN EL MISMO ADAPTADOR
         var view: View? = null
         var viewHolder: RecyclerView.ViewHolder? = null
 
@@ -88,35 +91,19 @@ class AdapterRvOpiniones (
             }
         }
 
-
-        /*
-        if (viewType === LAYOUT_ONE) {
-            view = LayoutInflater.from(context).inflate(R.layout.item_opinion_comentario_layout, parent, false)
-
-            viewHolder = ViewHolderComentario(view)
-        } else if(viewType === LAYOUT_TWO) {
-            view = LayoutInflater.from(context).inflate(R.layout.item_opinon_foto_layout, parent, false)
-            viewHolder = ViewHolderFoto(view)
-        }else{
-            view = LayoutInflater.from(context).inflate(R.layout.item_opinon_foto_layout, parent, false)
-            viewHolder = ViewHolderFoto(view)
-        }
-
-
-         */
         return viewHolder
 
+ */
+
+        return AdapterRvOpiniones.ViewHolder(
+
+            LayoutInflater.from(context).inflate(R.layout.item_opinion_comentario_layout, parent, false)
+        )
     }
 
+    /*
     override fun getItemViewType(position: Int): Int {
         //return if (position == 0) LAYOUT_ONE else LAYOUT_TWO
-        if(position == 0){
-            return LAYOUT_ONE
-        }else if(position == 1){
-            return LAYOUT_TWO
-        }else{
-            return LAYOUT_THREE
-        }
         /*
         var lay = LAYOUT_ONE
         when(position){
@@ -135,7 +122,9 @@ class AdapterRvOpiniones (
          */
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+     */
+
+    override fun onBindViewHolder(holder: AdapterRvOpiniones.ViewHolder, position: Int) {
 
         var opinion: Opinion = opiniones[position]
 
@@ -148,7 +137,21 @@ class AdapterRvOpiniones (
         val mon = opinion.yearOpinion
         val fechaST = "${dia}/${mon} ${hora}:${min}"
 
+        holder.txt_hora_comentario.text = (fechaST)
+        holder.txt_nombreUser_detalle.text = (opinion.userNameAutor)
 
+        if(opinion.comentario != null){
+            holder.ed_txt_multiline_opinion.setText(opinion.comentario)
+            if(opinion.userNameAutor.equals(VariablesCompartidas.userActual!!.userName)){
+                holder.ed_txt_multiline_opinion.setOnLongClickListener(View.OnLongClickListener {
+                    checkEliminar(opinion)
+                    false
+                })
+            }
+
+        }
+
+        /*
         when(holder.itemViewType){
             LAYOUT_ONE -> {
                 var viewHolderComent = holder as ViewHolderComentario
@@ -185,46 +188,10 @@ class AdapterRvOpiniones (
             }
         }
 
-/*
-        if(holder.itemViewType == LAYOUT_ONE){
-
-            var viewHolderComent = holder as ViewHolderComentario
-
-            viewHolderComent.txt_hora_comentario.text = (fechaST)
-            viewHolderComent.txt_nombreUser_detalle.text = (autor)
-
-            viewHolderComent.ed_txt_multiline_opinion.setText(opinion.comentario)
-            if(opinion.userNameAutor.equals(VariablesCompartidas.userActual!!.userName)){
-                viewHolderComent.ed_txt_multiline_opinion.setOnLongClickListener(View.OnLongClickListener {
-                    checkEliminar(opinion)
-                    false
-                })
-            }
-
-        }else if(holder.itemViewType == LAYOUT_TWO){
-            if(opinion.foto != null){
-                photo = getFotoStorage(opinion.foto!!)
-
-            }
-
-            var viewHolderFoto= holder as ViewHolderFoto
-
-            viewHolderFoto.txt_hora_comentario.text = (fechaST)
-            viewHolderFoto.txt_nombreUser_detalle.text = (autor)
-
-            viewHolderFoto.img_opinion.setImageBitmap(photo)
-        }else{
-
-            var viewHolderUbicacion = holder as ViewHolderUbicacion
-
-            viewHolderUbicacion.txt_hora_comentario.text = (fechaST)
-            viewHolderUbicacion.txt_nombreUser_detalle.text = (autor)
-        }
-
- */
-
+         */
     }
 
+    /*
     private fun getFotoStorage(idFoto: String):Bitmap?{
         //val storageRef = storage.reference
         val storageRef = Firebase.storage.reference
@@ -242,6 +209,7 @@ class AdapterRvOpiniones (
     }
 
 
+
     private fun getFoto(idFoto: String) : Bitmap?{
         val storageRef = storage.reference
         val imagesRef = storageRef.child("/images/${idFoto}")
@@ -256,6 +224,8 @@ class AdapterRvOpiniones (
         }
         return bitmap
     }
+
+     */
 
     //++++++++++++++++++++ ELIMINAR ++++++++++++++++++++++++++++++++++
     private fun checkEliminar(opinion: Opinion) {
@@ -335,6 +305,15 @@ class AdapterRvOpiniones (
     }
 
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+        val ed_txt_multiline_opinion = view.findViewById<EditText>(R.id.ed_txt_multiline_opinion)
+        val txt_hora_comentario = view.findViewById<TextView>(R.id.txt_hora_comentario)
+        val txt_nombreUser_detalle = view.findViewById<TextView>(R.id.txt_nombreUser_detalle)
+
+    }
+
+    /* TRES CLASES VIEWHOLDER
     class ViewHolderComentario(view: View) : RecyclerView.ViewHolder(view) {
 
         val ed_txt_multiline_opinion = view.findViewById<EditText>(R.id.ed_txt_multiline_opinion)
@@ -358,4 +337,6 @@ class AdapterRvOpiniones (
         val txt_nombreUser_detalle = view.findViewById<TextView>(R.id.txt_nombreUser_detalle_ubicacion)
 
     }
+
+     */
 }

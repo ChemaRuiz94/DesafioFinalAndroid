@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chema.eventoscompartidos.R
@@ -44,6 +45,7 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
     private val db = Firebase.firestore
 
     private lateinit var flt_btn_edit_event : FloatingActionButton
+    private lateinit var flt_btn_edit_add_user : FloatingActionButton
     private lateinit var btn_change_location_edit : Button
     private lateinit var btn_fecha_edit: Button
     private lateinit var btn_hora_edit: Button
@@ -75,6 +77,7 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(R.layout.activity_edit_event)
 
         flt_btn_edit_event = findViewById(R.id.flt_btn_edit_event)
+        flt_btn_edit_add_user = findViewById(R.id.flt_btn_edit_add_user)
         btn_change_location_edit = findViewById(R.id.btn_change_location_edit)
         btn_fecha_edit = findViewById(R.id.btn_fecha_edit)
         btn_hora_edit = findViewById(R.id.btn_hora_edit)
@@ -85,8 +88,8 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val bundle:Bundle? = intent.extras
         idEvento = (bundle?.getString("idEvento"))
-
-
+        evento = VariablesCompartidas.eventoActual
+/*
         runBlocking {
             Log.e("preuba1","Prueba1")
             val job : Job = launch(context = Dispatchers.Default) {
@@ -99,6 +102,8 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
             job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
         }
 
+
+ */
         runBlocking {
             Log.e("preuba2","Prueba2")
             val job2 : Job = launch(context = Dispatchers.Default) {
@@ -110,6 +115,7 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
             job2.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
         }
 
+
         btn_fecha_edit.setOnClickListener{
             val newFragment = DatePickerFragment(ed_txt_fecha_edit)
             newFragment.show(supportFragmentManager, "datePicker")
@@ -120,6 +126,7 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         btn_change_location_edit.setOnClickListener{
+
             val mapIntent = Intent(this, MapsActivity::class.java).apply {
                 //putExtra("email",email)
             }
@@ -130,11 +137,49 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
             guardar_evento()
         }
 
+        flt_btn_edit_add_user.setOnClickListener{
+            VariablesCompartidas.addMode = true
+            val intentAddUser = Intent(this,AddUserActivity::class.java)
+            startActivity(intentAddUser)
+        }
+
         cargarUserAsist()
         cargarDatosEvento()
         cargarRV()
         cargarMapa()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        runBlocking {
+            Log.e("preuba2","Prueba2")
+            val job2 : Job = launch(context = Dispatchers.Default) {
+                val datos2 : QuerySnapshot = getDataFromFireStore2() as QuerySnapshot //Obtenermos la colección
+                Log.e("preuba1",datos2.toString())
+                obtenerDatos2(datos2 as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
+            }
+            //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
+            job2.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
+        }
+        cargarUserAsist()
+        cargarRV()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        runBlocking {
+            Log.e("preuba2","Prueba2")
+            val job2 : Job = launch(context = Dispatchers.Default) {
+                val datos2 : QuerySnapshot = getDataFromFireStore2() as QuerySnapshot //Obtenermos la colección
+                Log.e("preuba1",datos2.toString())
+                obtenerDatos2(datos2 as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
+            }
+            //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
+            job2.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
+        }
+        cargarUserAsist()
+        cargarRV()
     }
 
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -207,6 +252,36 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
         rv.adapter = miAdapter
     }
 
+    /*
+    fun addUsersDialog() {
+        VariablesCompartidas.addMode = true
+        val dialog = layoutInflater.inflate(R.layout.add_users_to_event_layout, null)
+
+        rv = findViewById(R.id.rv_add_user)
+        rv.setHasFixedSize(true)
+        rv.layoutManager = LinearLayoutManager(dialog.context)
+        miAdapter = AdapterRvUsers(this, usuarios,false)
+        rv.adapter = miAdapter
+
+
+
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.addUser))
+            .setView(dialog)
+            .setPositiveButton("OK") { view, _ ->
+
+                VariablesCompartidas.addMode = false
+            }
+            .setNegativeButton(getString(R.string.cancelar)) { view, _ ->
+                VariablesCompartidas.addMode = false
+                view.dismiss()
+            }
+            .setCancelable(false)
+            .create()
+            .show()
+    }
+
+     */
     //++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     private fun cargarMapa() {
