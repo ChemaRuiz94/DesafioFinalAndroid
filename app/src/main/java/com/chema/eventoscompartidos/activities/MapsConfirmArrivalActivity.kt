@@ -64,6 +64,7 @@ class MapsConfirmArrivalActivity : AppCompatActivity(), OnMapReadyCallback, Goog
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
+        mMap.mapType = GoogleMap.MAP_TYPE_HYBRID
         val evento = LatLng(VariablesCompartidas.eventoActual!!.latUbi.toString().toDouble(), VariablesCompartidas.eventoActual!!.lonUbi.toString().toDouble())
         val mark = mMap.addMarker(MarkerOptions().position(evento).title("${VariablesCompartidas.eventoActual!!.nombreEvento}"))
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mark!!.getPosition(), 14F))

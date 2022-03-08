@@ -137,9 +137,11 @@ class AdapterRvOpiniones (
         val mon = opinion.yearOpinion
         val fechaST = "${dia}/${mon} ${hora}:${min}"
 
+        holder.txt_hora_comentario.text = (fechaST)
+        holder.txt_nombreUser_detalle.text = (opinion.userNameAutor)
+
         if(opinion.comentario != null){
-            holder.txt_hora_comentario.text = (fechaST)
-            holder.txt_nombreUser_detalle.text = (opinion.userNameAutor)
+
             holder.ed_txt_multiline_opinion.setText(opinion.comentario)
             if(opinion.userNameAutor.equals(VariablesCompartidas.userActual!!.userName)){
                 holder.ed_txt_multiline_opinion.setOnLongClickListener(View.OnLongClickListener {
