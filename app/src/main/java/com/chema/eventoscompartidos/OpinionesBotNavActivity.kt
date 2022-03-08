@@ -8,6 +8,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.chema.eventoscompartidos.databinding.ActivityOpinionesBotNavBinding
+import com.chema.eventoscompartidos.utils.VariablesCompartidas
 
 class OpinionesBotNavActivity : AppCompatActivity() {
 
@@ -26,10 +27,17 @@ class OpinionesBotNavActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_fotos, R.id.navigation_dashboard, R.id.navigation_notifications
+                R.id.nav_fotos, R.id.navigation_dashboard, R.id.navigation_arrives
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        VariablesCompartidas.checkMode = false
     }
 }

@@ -89,21 +89,7 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
         val bundle:Bundle? = intent.extras
         idEvento = (bundle?.getString("idEvento"))
         evento = VariablesCompartidas.eventoActual
-/*
-        runBlocking {
-            Log.e("preuba1","Prueba1")
-            val job : Job = launch(context = Dispatchers.Default) {
-                val datos : QuerySnapshot = getDataFromFireStore() as QuerySnapshot //Obtenermos la colección
-                Log.e("preuba1",datos.toString())
-                obtenerDatos(datos as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
-            }
-            Log.e("preuba1",job.toString())
-            //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
-            job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
-        }
 
-
- */
         runBlocking {
             Log.e("preuba2","Prueba2")
             val job2 : Job = launch(context = Dispatchers.Default) {
@@ -252,36 +238,6 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
         rv.adapter = miAdapter
     }
 
-    /*
-    fun addUsersDialog() {
-        VariablesCompartidas.addMode = true
-        val dialog = layoutInflater.inflate(R.layout.add_users_to_event_layout, null)
-
-        rv = findViewById(R.id.rv_add_user)
-        rv.setHasFixedSize(true)
-        rv.layoutManager = LinearLayoutManager(dialog.context)
-        miAdapter = AdapterRvUsers(this, usuarios,false)
-        rv.adapter = miAdapter
-
-
-
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.addUser))
-            .setView(dialog)
-            .setPositiveButton("OK") { view, _ ->
-
-                VariablesCompartidas.addMode = false
-            }
-            .setNegativeButton(getString(R.string.cancelar)) { view, _ ->
-                VariablesCompartidas.addMode = false
-                view.dismiss()
-            }
-            .setCancelable(false)
-            .create()
-            .show()
-    }
-
-     */
     //++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     private fun cargarMapa() {
@@ -300,17 +256,6 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
 
     //++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    suspend fun getDataFromFireStore()  : QuerySnapshot? {
-        return try{
-            val data = db.collection("${Constantes.collectionEvents}")
-                .whereEqualTo("idEvento","${idEvento}")
-                .get()
-                .await()
-            data
-        }catch (e : Exception){
-            null
-        }
-    }
 
     suspend fun getDataFromFireStore2()  : QuerySnapshot? {
         return try{
@@ -323,33 +268,6 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun obtenerDatos(datos: QuerySnapshot?) {
-        evento = null
-
-        for(dc: DocumentChange in datos?.documentChanges!!){
-            if (dc.type == DocumentChange.Type.ADDED){
-                var ev = Evento(
-                    dc.document.get("idEvento").toString(),
-                    dc.document.get("nombreEvento").toString(),
-                    dc.document.get("horaEvento").toString().toInt(),
-                    dc.document.get("minEvento").toString().toInt(),
-                    dc.document.get("diaEvento").toString().toInt(),
-                    dc.document.get("mesEvento").toString().toInt(),
-                    dc.document.get("yearEvento").toString().toInt(),
-                    dc.document.get("latUbi").toString(),
-                    dc.document.get("lonUbi").toString(),
-                    dc.document.get("asistentes") as ArrayList<User>?,
-                    dc.document.get("emailAsistentes") as ArrayList<String>?,
-                    dc.document.get("idAsistentesHora") as HashMap<String, Calendar>?,
-                    dc.document.get("listaOpiniones") as ArrayList<Opinion>?
-                )
-                evento = ev
-                Log.e("preuba1",evento.toString())
-                //VariblesComunes.eventoActual = evento
-            }
-        }
-
-    }
 
 
     private fun obtenerDatos2(datos: QuerySnapshot?) {

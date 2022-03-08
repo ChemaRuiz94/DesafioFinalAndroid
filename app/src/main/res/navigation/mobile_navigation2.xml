@@ -18,8 +18,8 @@
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.chema.eventoscompartidos.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_arrives"
+        android:name="com.chema.eventoscompartidos.fragment.EventUsersFragment"
+        android:label="@string/arrives"
+        tools:layout="@layout/fragment_event_users" />
 </navigation>

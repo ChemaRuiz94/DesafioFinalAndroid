@@ -38,7 +38,11 @@ class AdapterRvUsers (
         var usuario: User = usuarios[position]
         holder.nombre.text = usuario.userName
 
+
+
+
         if(VariablesCompartidas.addMode){
+            //MODO AÑADIR USER A UN EVENTO YA CREADO
             if(!VariablesCompartidas.eventoActual!!.emailAsistentes!!.contains(usuario.email)){
                 holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_no)
                 holder.txt_asiste.text = "No asiste"
@@ -52,7 +56,24 @@ class AdapterRvUsers (
                 change_tick_add_mode(holder,usuario)
             }
 
-        }else{
+        }
+
+        else if(VariablesCompartidas.checkMode){
+            //MODO CHEK PARA COMPROBAR QUE USUARIOS HAN LLEGADO A UN EVENTO YA CREADO
+            if(VariablesCompartidas.eventoActual!!.idAsistentesHora!!.contains(usuario.userId)){
+                holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_yes)
+                holder.txt_asiste.text = "Ha llegado"
+                holder.nombre.text = usuario.userName
+            }else{
+                holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_no)
+                holder.txt_asiste.text = "No ha llegado"
+                holder.nombre.text = usuario.userName
+            }
+
+        }
+
+        else{
+            //MODO EDITAR PARA EXPULSAR DE UN EVENTO YA CREADO
             if(editMode){
                 holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_yes)
                 holder.txt_asiste.text = ""
@@ -61,6 +82,7 @@ class AdapterRvUsers (
                     expulsarDelEvento(usuario)
                 }
             }else{
+                //MODO NORMAL, PARA AÑADIR USUARIOS A UN EVENTO SIN CREAR
                 holder.img_correcto.setImageResource(R.drawable.ic_baseline_check_24_no)
                 holder.nombre.text = usuario.userName
 
