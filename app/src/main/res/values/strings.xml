@@ -20,6 +20,9 @@
     <string name="delete">Delete</string>
     <string name="deleteThisEvent">Delete this Event?</string>
     <string name="deleteThisOpinion">Delete this Coment?</string>
+    <string name="deleteThisUser">Delete this User?</string>
+    <string name="kickThisUser">Kick  this User?</string>
+    <string name="addUser">Add User?</string>
     <string name="ocurridoErrorAutenticacion">Se ha producido un error autenticando al usuairo</string>
     <string name="SignUpSuscesfull">SignUp Suscesfull</string>
     <string name="Suscesfull">Suscesfull</string>
@@ -59,6 +62,9 @@
     <string name="strGaleria">Gallery</string>
     <string name="addPhoto">Add Photo</string>
     <string name="addLocation">Add Location</string>
+    <string name="confirmArrival">Confirm Arrival</string>
+    <string name="files">Files</string>
+    <string name="confirmSelection">Confirm Selection</string>
 
 
     <string name="satellite_mode">Satellite Mode</string>
@@ -75,7 +81,7 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="title_activity_maps">MapsActivity</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_admin_tabbed">AdminTabbedActivity</string>
     <string name="tab_users">Users</string>
@@ -83,4 +89,11 @@
     <string name="title_activity_admin_nav_draw">AdminNavDrawActivity</string>
     <string name="title_activity_admin_nav_home">AdminNavHomeActivity</string>
     <string name="title_activity_admin_tabb">AdminTabbActivity</string>
+    <string name="title_activity_maps_confirm_arrival">MapsConfirmArrivalActivity</string>
+    <string name="title_activity_maps_opinion">MapsOpinionActivity</string>
+    <string name="title_activity_opiniones_bot_nav">OpinionesBotNavActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="arrives">Arrives</string>
 </resources>

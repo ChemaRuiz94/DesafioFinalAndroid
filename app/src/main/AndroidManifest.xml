@@ -21,18 +21,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EventosCompartidos">
         <activity
-            android:name=".activities.EditEventActivity"
-            android:exported="true" />
-        <activity
-            android:name=".AdminTabbActivity"
+            android:name=".OpinionesBotNavActivity"
             android:exported="true"
-            android:label="@string/title_activity_admin_tabb"
-            android:theme="@style/Theme.EventosCompartidos.NoActionBar" />
+            android:label="@string/title_activity_opiniones_bot_nav" />
         <activity
-            android:name=".activities.AdminActivity"
-            android:exported="true" />
-        <activity
-            android:name=".activities.DetalleEventoActivity"
+            android:name=".activities.AddUserActivity"
             android:exported="true" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -46,6 +39,28 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <activity
+            android:name=".activities.MapsOpinionActivity"
+            android:exported="true"
+            android:label="@string/title_activity_maps_opinion" />
+        <activity
+            android:name=".activities.MapsConfirmArrivalActivity"
+            android:exported="true"
+            android:label="@string/title_activity_maps_confirm_arrival" />
+        <activity
+            android:name=".activities.EditEventActivity"
+            android:exported="true" />
+        <activity
+            android:name=".AdminTabbActivity"
+            android:exported="true"
+            android:label="@string/title_activity_admin_tabb"
+            android:theme="@style/Theme.EventosCompartidos.NoActionBar" />
+        <activity
+            android:name=".activities.AdminActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.DetalleEventoActivity"
+            android:exported="true" />
         <activity
             android:name=".activities.MapsActivity"
             android:exported="true"

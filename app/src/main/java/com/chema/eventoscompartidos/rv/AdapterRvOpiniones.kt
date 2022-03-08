@@ -20,33 +20,115 @@ import com.chema.eventoscompartidos.utils.VariablesCompartidas
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
+import androidx.annotation.NonNull
+
+import com.google.android.gms.tasks.OnFailureListener
+
+import android.util.DisplayMetrics
+
+import android.graphics.BitmapFactory
+import com.google.firebase.storage.FirebaseStorage
+
 
 class AdapterRvOpiniones (
     private val context: AppCompatActivity,
     private val opiniones: ArrayList<Opinion>
 ) : RecyclerView.Adapter<AdapterRvOpiniones.ViewHolder>() {
 
+    /*
+    private val LAYOUT_ONE = 0
+    private val LAYOUT_TWO = 1
+    private val LAYOUT_THREE = 2
+    private var photo : Bitmap? = null
+
+
+     */
     override fun getItemCount(): Int {
         return opiniones.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterRvOpiniones.ViewHolder {
+/*
+//PARA INFLAR TRES LAYOUTS DIFERENTES EN EL MISMO ADAPTADOR
+        var view: View? = null
+        var viewHolder: RecyclerView.ViewHolder? = null
+
+        view = LayoutInflater.from(context).inflate(R.layout.item_opinion_comentario_layout, parent, false)
+
+        viewHolder = ViewHolderComentario(view)
+
+
+        when(viewType){
+            LAYOUT_ONE -> {
+                view = LayoutInflater.from(context).inflate(R.layout.item_opinion_comentario_layout, parent, false)
+
+                viewHolder = ViewHolderComentario(view)
+                return viewHolder
+            }
+            LAYOUT_TWO -> {
+                view = LayoutInflater.from(context).inflate(R.layout.item_opinon_foto_layout, parent, false)
+
+                viewHolder = ViewHolderComentario(view)
+                return viewHolder
+            }
+            LAYOUT_THREE -> {
+                view = LayoutInflater.from(context).inflate(R.layout.item_opinon_ubicacion_layout, parent, false)
+
+                viewHolder = ViewHolderUbicacion(view)
+                return viewHolder
+            }
+        }
+
+        return viewHolder
+
+ */
 
         return AdapterRvOpiniones.ViewHolder(
+
             LayoutInflater.from(context).inflate(R.layout.item_opinion_comentario_layout, parent, false)
         )
     }
 
+    /*
+    override fun getItemViewType(position: Int): Int {
+        //return if (position == 0) LAYOUT_ONE else LAYOUT_TWO
+        /*
+        var lay = LAYOUT_ONE
+        when(position){
+            0 -> {
+                lay =  LAYOUT_ONE
+            }
+            1 -> {
+                lay = LAYOUT_TWO
+            }
+            2 -> {
+                lay = LAYOUT_THREE
+            }
+        }
+        return lay
+
+         */
+    }
+
+     */
+
     override fun onBindViewHolder(holder: AdapterRvOpiniones.ViewHolder, position: Int) {
+
         var opinion: Opinion = opiniones[position]
+
+        val autor = opinion.userNameAutor
 
         //AQUI PONEMOS LA FECHA
         val hora = opinion.horaOpinion
@@ -55,10 +137,9 @@ class AdapterRvOpiniones (
         val mon = opinion.yearOpinion
         val fechaST = "${dia}/${mon} ${hora}:${min}"
 
-        holder.txt_hora_comentario.text = (fechaST)
-        holder.txt_nombreUser_detalle.text = (opinion.userNameAutor)
-
         if(opinion.comentario != null){
+            holder.txt_hora_comentario.text = (fechaST)
+            holder.txt_nombreUser_detalle.text = (opinion.userNameAutor)
             holder.ed_txt_multiline_opinion.setText(opinion.comentario)
             if(opinion.userNameAutor.equals(VariablesCompartidas.userActual!!.userName)){
                 holder.ed_txt_multiline_opinion.setOnLongClickListener(View.OnLongClickListener {
@@ -70,48 +151,52 @@ class AdapterRvOpiniones (
         }
 
         /*
-        //AQUI OCULTAMOS UNOS COMPONENTES U OTROS SEGUN EL COMENTARIO
-        if(opinion.comentario != null){
-            holder.frm_map_opinion.isEnabled = false
-            holder.frm_map_opinion.isVisible = false
-            holder.img_opinion.isEnabled = false
-            holder.img_opinion.isVisible = false
-            holder.ed_txt_multiline_opinion.setText(opinion.comentario)
-        }else if(opinion.foto != null){
-            holder.frm_map_opinion.isEnabled = false
-            holder.frm_map_opinion.isVisible = false
-            holder.ed_txt_multiline_opinion.isEnabled = false
-            holder.ed_txt_multiline_opinion.isVisible = false
-            val imgSt = opinion.foto
-            val img : Bitmap? = Auxiliar.StringToBitMap(imgSt)
-            holder.img_opinion.setImageBitmap(img)
-        }else{
-            holder.img_opinion.isEnabled = false
-            holder.img_opinion.isVisible = false
-            holder.ed_txt_multiline_opinion.isEnabled = false
-            holder.ed_txt_multiline_opinion.isVisible = false
+        when(holder.itemViewType){
+            LAYOUT_ONE -> {
+                var viewHolderComent = holder as ViewHolderComentario
 
+                viewHolderComent.txt_hora_comentario.text = (fechaST)
+                viewHolderComent.txt_nombreUser_detalle.text = (autor)
+
+                viewHolderComent.ed_txt_multiline_opinion.setText(opinion.comentario)
+                if(opinion.userNameAutor.equals(VariablesCompartidas.userActual!!.userName)){
+                    viewHolderComent.ed_txt_multiline_opinion.setOnLongClickListener(View.OnLongClickListener {
+                        checkEliminar(opinion)
+                        false
+                    })
+                }
+            }
+            LAYOUT_TWO -> {
+                if(opinion.foto != null){
+                    photo = getFotoStorage(opinion.foto!!)
+
+                }
+
+                var viewHolderFoto= holder as ViewHolderFoto
+
+                viewHolderFoto.txt_hora_comentario.text = (fechaST)
+                viewHolderFoto.txt_nombreUser_detalle.text = (autor)
+
+                viewHolderFoto.img_opinion.setImageBitmap(photo)
+            }
+            LAYOUT_THREE -> {
+                var viewHolderUbicacion = holder as ViewHolderUbicacion
+
+                viewHolderUbicacion.txt_hora_comentario.text = (fechaST)
+                viewHolderUbicacion.txt_nombreUser_detalle.text = (autor)
+            }
         }
 
-
          */
-
-        holder.itemView.setOnLongClickListener(View.OnLongClickListener {
-            checkEliminar(opinion)
-            false
-        })
-
-
-
     }
+
 
     //++++++++++++++++++++ ELIMINAR ++++++++++++++++++++++++++++++++++
     private fun checkEliminar(opinion: Opinion) {
         AlertDialog.Builder(context).setTitle(R.string.deleteThisOpinion)
             .setPositiveButton(R.string.delete) { view, _ ->
-                //elimina evento
+
                 val db = FirebaseFirestore.getInstance()
-                Log.d("PRUEBA1", "pre runBlock1")
                 checkEliminarOpinionesDelEvento(opinion)
                 db.collection("${Constantes.collectionOpiniones}").document("${opinion.idOpinion}").delete()
 
@@ -136,7 +221,6 @@ class AdapterRvOpiniones (
 
     suspend fun getDataFromFireStore()  : QuerySnapshot? {
 
-        Log.d("PRUEBA1", "post runBlock")
         val db = FirebaseFirestore.getInstance()
         return try{
             val data = db.collection("${Constantes.collectionEvents}")
@@ -167,7 +251,7 @@ class AdapterRvOpiniones (
                     dc.document.get("lonUbi").toString(),
                     dc.document.get("asistentes") as ArrayList<User>?,
                     dc.document.get("emailAsistentes") as ArrayList<String>?,
-                    dc.document.get("idAsistentesHora") as HashMap<UUID, Date>?,
+                    dc.document.get("idAsistentesHora") as HashMap<String, Calendar>?,
                     dc.document.get("listaOpiniones") as ArrayList<Opinion>?
                 )
                 if(ev.listaOpiniones!!.contains(opinion)){
@@ -188,10 +272,35 @@ class AdapterRvOpiniones (
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         val ed_txt_multiline_opinion = view.findViewById<EditText>(R.id.ed_txt_multiline_opinion)
-        //val img_opinion = view.findViewById<ImageView>(R.id.img_opinion)
-        //val frm_map_opinion = view.findViewById<FrameLayout>(R.id.frm_map_opinion)
         val txt_hora_comentario = view.findViewById<TextView>(R.id.txt_hora_comentario)
         val txt_nombreUser_detalle = view.findViewById<TextView>(R.id.txt_nombreUser_detalle)
 
     }
+
+    /* TRES CLASES VIEWHOLDER
+    class ViewHolderComentario(view: View) : RecyclerView.ViewHolder(view) {
+
+        val ed_txt_multiline_opinion = view.findViewById<EditText>(R.id.ed_txt_multiline_opinion)
+        val txt_hora_comentario = view.findViewById<TextView>(R.id.txt_hora_comentario)
+        val txt_nombreUser_detalle = view.findViewById<TextView>(R.id.txt_nombreUser_detalle)
+
+    }
+
+    class ViewHolderFoto(view: View) : RecyclerView.ViewHolder(view) {
+
+        val img_opinion = view.findViewById<ImageView>(R.id.um_foto_comentario)
+        val txt_hora_comentario = view.findViewById<TextView>(R.id.txt_hora_comentario_foto)
+        val txt_nombreUser_detalle = view.findViewById<TextView>(R.id.txt_nombreUser_detalle_foto)
+
+    }
+
+    class ViewHolderUbicacion(view: View) : RecyclerView.ViewHolder(view) {
+
+        val frm_map_opinion = view.findViewById<FrameLayout>(R.id.frm_map_opinion)
+        val txt_hora_comentario = view.findViewById<TextView>(R.id.txt_hora_comentario_ubicacion)
+        val txt_nombreUser_detalle = view.findViewById<TextView>(R.id.txt_nombreUser_detalle_ubicacion)
+
+    }
+
+     */
 }

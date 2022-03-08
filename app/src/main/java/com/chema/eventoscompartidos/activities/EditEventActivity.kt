@@ -1,10 +1,13 @@
 package com.chema.eventoscompartidos.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chema.eventoscompartidos.R
@@ -16,6 +19,7 @@ import com.chema.eventoscompartidos.rv.AdapterRvUsers
 import com.chema.eventoscompartidos.utils.Constantes
 import com.chema.eventoscompartidos.utils.DatePickerFragment
 import com.chema.eventoscompartidos.utils.TimePickerFragment
+import com.chema.eventoscompartidos.utils.VariablesCompartidas
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -41,6 +45,7 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
     private val db = Firebase.firestore
 
     private lateinit var flt_btn_edit_event : FloatingActionButton
+    private lateinit var flt_btn_edit_add_user : FloatingActionButton
     private lateinit var btn_change_location_edit : Button
     private lateinit var btn_fecha_edit: Button
     private lateinit var btn_hora_edit: Button
@@ -72,6 +77,7 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(R.layout.activity_edit_event)
 
         flt_btn_edit_event = findViewById(R.id.flt_btn_edit_event)
+        flt_btn_edit_add_user = findViewById(R.id.flt_btn_edit_add_user)
         btn_change_location_edit = findViewById(R.id.btn_change_location_edit)
         btn_fecha_edit = findViewById(R.id.btn_fecha_edit)
         btn_hora_edit = findViewById(R.id.btn_hora_edit)
@@ -82,19 +88,7 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val bundle:Bundle? = intent.extras
         idEvento = (bundle?.getString("idEvento"))
-
-
-        runBlocking {
-            Log.e("preuba1","Prueba1")
-            val job : Job = launch(context = Dispatchers.Default) {
-                val datos : QuerySnapshot = getDataFromFireStore() as QuerySnapshot //Obtenermos la colección
-                Log.e("preuba1",datos.toString())
-                obtenerDatos(datos as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
-            }
-            Log.e("preuba1",job.toString())
-            //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
-            job.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
-        }
+        evento = VariablesCompartidas.eventoActual
 
         runBlocking {
             Log.e("preuba2","Prueba2")
@@ -107,6 +101,7 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
             job2.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
         }
 
+
         btn_fecha_edit.setOnClickListener{
             val newFragment = DatePickerFragment(ed_txt_fecha_edit)
             newFragment.show(supportFragmentManager, "datePicker")
@@ -116,11 +111,61 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
             newFragment.show(supportFragmentManager, "timePicker")
         }
 
+        btn_change_location_edit.setOnClickListener{
+
+            val mapIntent = Intent(this, MapsActivity::class.java).apply {
+                //putExtra("email",email)
+            }
+            startActivityForResult(mapIntent,1)
+        }
+
+        flt_btn_edit_event.setOnClickListener{
+            guardar_evento()
+        }
+
+        flt_btn_edit_add_user.setOnClickListener{
+            VariablesCompartidas.addMode = true
+            val intentAddUser = Intent(this,AddUserActivity::class.java)
+            startActivity(intentAddUser)
+        }
+
         cargarUserAsist()
         cargarDatosEvento()
         cargarRV()
         cargarMapa()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        runBlocking {
+            Log.e("preuba2","Prueba2")
+            val job2 : Job = launch(context = Dispatchers.Default) {
+                val datos2 : QuerySnapshot = getDataFromFireStore2() as QuerySnapshot //Obtenermos la colección
+                Log.e("preuba1",datos2.toString())
+                obtenerDatos2(datos2 as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
+            }
+            //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
+            job2.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
+        }
+        cargarUserAsist()
+        cargarRV()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        runBlocking {
+            Log.e("preuba2","Prueba2")
+            val job2 : Job = launch(context = Dispatchers.Default) {
+                val datos2 : QuerySnapshot = getDataFromFireStore2() as QuerySnapshot //Obtenermos la colección
+                Log.e("preuba1",datos2.toString())
+                obtenerDatos2(datos2 as QuerySnapshot?)  //'Destripamos' la colección y la metemos en nuestro ArrayList
+            }
+            //Con este método el hilo principal de onCreate se espera a que la función acabe y devuelva la colección con los datos.
+            job2.join() //Esperamos a que el método acabe: https://dzone.com/articles/waiting-for-coroutines
+        }
+        cargarUserAsist()
+        cargarRV()
     }
 
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -140,6 +185,41 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
+    //++++++++++++++++++++++++++++++++++++++++++++++
+    private fun guardar_evento(){
+        val idEv = evento!!.idEvento
+        val listaOpiniones: ArrayList<Opinion>? = evento!!.listaOpiniones
+        val listaUsers: ArrayList<User>? = evento!!.asistentes
+        val listaEmailUsers: ArrayList<String>? = evento!!.emailAsistentes
+        val idAsistentesHora = evento!!.idAsistentesHora
+
+        var evento = hashMapOf(
+
+            "idEvento" to idEv,
+            "nombreEvento" to ed_txt_titulo_evento_edit.text.toString(),
+            "horaEvento" to VariablesCompartidas.horaEventoActual,
+            "minEvento" to VariablesCompartidas.minutoEventoActual,
+            "diaEvento" to VariablesCompartidas.diaEventoActual,
+            "mesEvento" to VariablesCompartidas.mesEventoActual,
+            "yearEvento" to VariablesCompartidas.yearEventoActual,
+            "latUbi" to VariablesCompartidas.latEventoActual,
+            "lonUbi" to VariablesCompartidas.lonEventoActual,
+            "asistentes" to listaUsers,
+            "emailAsistentes" to listaEmailUsers,
+            "idAsistentesHora" to idAsistentesHora,
+            "listaOpiniones" to listaOpiniones,
+
+            )
+
+        db.collection("${Constantes.collectionEvents}")
+            .document(idEv) //Será la clave del documento.
+            .set(evento).addOnSuccessListener {
+                Toast.makeText(this, getString(R.string.Suscesfull), Toast.LENGTH_SHORT).show()
+                finish()
+            }.addOnFailureListener{
+                Toast.makeText(this, getString(R.string.ocurridoErrorAutenticacion), Toast.LENGTH_SHORT).show()
+            }
+    }
 
     //+++++++++++++++ASISTENTES+++++++++++++++++++
     private fun cargarUserAsist() {
@@ -176,17 +256,6 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
 
     //++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    suspend fun getDataFromFireStore()  : QuerySnapshot? {
-        return try{
-            val data = db.collection("${Constantes.collectionEvents}")
-                .whereEqualTo("idEvento","${idEvento}")
-                .get()
-                .await()
-            data
-        }catch (e : Exception){
-            null
-        }
-    }
 
     suspend fun getDataFromFireStore2()  : QuerySnapshot? {
         return try{
@@ -199,33 +268,6 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun obtenerDatos(datos: QuerySnapshot?) {
-        evento = null
-
-        for(dc: DocumentChange in datos?.documentChanges!!){
-            if (dc.type == DocumentChange.Type.ADDED){
-                var ev = Evento(
-                    dc.document.get("idEvento").toString(),
-                    dc.document.get("nombreEvento").toString(),
-                    dc.document.get("horaEvento").toString().toInt(),
-                    dc.document.get("minEvento").toString().toInt(),
-                    dc.document.get("diaEvento").toString().toInt(),
-                    dc.document.get("mesEvento").toString().toInt(),
-                    dc.document.get("yearEvento").toString().toInt(),
-                    dc.document.get("latUbi").toString(),
-                    dc.document.get("lonUbi").toString(),
-                    dc.document.get("asistentes") as ArrayList<User>?,
-                    dc.document.get("emailAsistentes") as ArrayList<String>?,
-                    dc.document.get("idAsistentesHora") as HashMap<UUID, Date>?,
-                    dc.document.get("listaOpiniones") as ArrayList<Opinion>?
-                )
-                evento = ev
-                Log.e("preuba1",evento.toString())
-                //VariblesComunes.eventoActual = evento
-            }
-        }
-
-    }
 
 
     private fun obtenerDatos2(datos: QuerySnapshot?) {
@@ -246,6 +288,21 @@ class EditEventActivity : AppCompatActivity(), OnMapReadyCallback {
                 )
                 usuarios.add(user)
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(VariablesCompartidas.latEventoActual != null && VariablesCompartidas.lonEventoActual != null){
+            ubicacionActual = LatLng(VariablesCompartidas.latEventoActual.toString().toDouble(),VariablesCompartidas.lonEventoActual.toString().toDouble())
+            ed_txt_ubicacion_edit.setText("${ubicacionActual}")
+
+            ubicacionCambiada = true
+
+            val ubi = LatLng(VariablesCompartidas.latEventoActual.toString().toDouble(), VariablesCompartidas.lonEventoActual.toString().toDouble())
+            mMap?.addMarker(MarkerOptions().position(ubi).title("${ed_txt_titulo_evento_edit.text}"))
+            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(ubi,15f))
         }
     }
 }

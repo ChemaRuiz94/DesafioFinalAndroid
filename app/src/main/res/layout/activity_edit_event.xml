@@ -18,18 +18,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.179" />
 
-    <TextView
-        android:id="@+id/textView_edit"
-        android:layout_width="149dp"
-        android:layout_height="21dp"
-        android:text="@string/asistentesEvento"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.045"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.09" />
-
     <EditText
         android:id="@+id/ed_txt_titulo_evento_edit"
         android:layout_width="wrap_content"
@@ -153,6 +141,19 @@
         app:layout_constraintVertical_bias="0.882"
         tools:context=".activities.EditEventActivity"
         tools:layout="@layout/fragment_new_event_maps" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/flt_btn_edit_add_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.025"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.056"
+        app:srcCompat="@drawable/ic_person_add" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,17 +1,15 @@
 package com.chema.eventoscompartidos.utils
 
 object Constantes {
-    val collectionUser = "user"
-    val collectionUser2 = "users2"
-
-    val collectionEvents = "events"
-    val collectionOpiniones = "opiniones"
+    const val collectionUser = "user"
+    const val collectionEvents = "events"
+    const val collectionOpiniones = "opiniones"
 
     const val COLLECTION_ROL = "roles"
 
-    val rolAdmin = "admin"
-    val rolUser = "user"
+    const val rolAdmin = "admin"
+    const val rolUser = "user"
 
-    val CODE_GALLERY = 1
-    val CODE_CAMERA = 1888
+    const val CODE_GALLERY = 1
+    const val CODE_CAMERA = 1888
 }
