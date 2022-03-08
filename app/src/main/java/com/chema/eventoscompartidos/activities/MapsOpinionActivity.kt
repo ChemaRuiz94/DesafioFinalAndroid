@@ -146,10 +146,11 @@ class MapsOpinionActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
         val fecha = Calendar.getInstance()
         val hora = fecha.get(Calendar.HOUR)
         val min = fecha.get(Calendar.MINUTE)
+        var segOpinion: Int = Calendar.SECOND
         val dia = fecha.get(Calendar.DAY_OF_MONTH)
         val mes = fecha.get(Calendar.MONTH)
         val year = fecha.get(Calendar.YEAR)
-        return Opinion(idOpin,VariablesCompartidas.eventoActual!!.idEvento,userNameAutor,coment,photo,longImport,latImport,hora,min,dia,mes,year)
+        return Opinion(idOpin,VariablesCompartidas.eventoActual!!.idEvento,userNameAutor,coment,photo,longImport,latImport,hora,min,segOpinion,dia,mes,year)
     }
 
     fun saveComentarioFirebase(opinion: Opinion){
